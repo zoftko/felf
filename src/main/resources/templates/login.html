@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layout}">
+  <head>
+    <title>Sign in</title>
+  </head>
+  <body>
+    <main layout:fragment="content" class="max-w-screen-md mx-auto grow p-4 flex place-items-center">
+      <div class="flex flex-col text-center">
+        <h2 class="text-4xl">Log in</h2>
+        <h3 class="text-xl text-gray-600 mt-6">Choose one of the providers below</h3>
+        <ul class="mt-6" th:each="provider : ${providers}">
+          <li
+            class="bg-zinc-100 hover:bg-zinc-200 font-bold py-2 px-6 rounded text-lg border border-gray-400 shadow"
+          >
+            <a
+              class="flex items-center"
+              th:inline="text"
+              th:href="@{/oauth2/authorization/{provider}(provider=${provider.key})}"
+            >
+              <img
+                th:alt="${provider.value} + 'Logo'"
+                th:src="@{/static/img/logos/{provider}.svg(provider=${provider.key})}"
+                class="mx-4 w-8"
+              />
+              [[${provider.value}]]
+            </a>
+          </li>
+        </ul>
+      </div>
+    </main>
+  </body>
+</html>

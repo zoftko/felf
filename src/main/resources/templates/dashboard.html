@@ -1,0 +1,15 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layout}">
+  <body>
+    <main
+      layout:fragment="content"
+      class="max-w-screen-md mx-auto grow p-4 flex place-items-center container"
+    >
+      <div th:if="${installations.isEmpty()}">
+        <p>Welcome!</p>
+        <p>To get started, please install the application</p>
+        <a href="https://github.com/apps/zoftko-felf/installations/new/">Install</a>
+      </div>
+    </main>
+  </body>
+</html>

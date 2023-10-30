@@ -1,0 +1,31 @@
+databaseChangeLog:
+  - changeSet:
+      id: 0-create-installation
+      author: anton
+      changes:
+        - createTable:
+            tableName: installation
+            columns:
+              - column:
+                  name: id
+                  type: int
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: account
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: target_type
+                  type: varchar(16)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: installation
+            columnNames: target

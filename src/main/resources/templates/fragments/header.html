@@ -1,0 +1,34 @@
+<header th:fragment="default">
+  <nav class="bg-base-100 shadow-md">
+    <div class="container navbar mx-auto">
+      <div class="flex-1">
+        <a th:href="@{/}" class="btn btn-ghost normal-case text-xl">ELF Watch</a>
+      </div>
+      <div class="flex-none" sec:authorize="isAuthenticated()">
+        <div class="dropdown dropdown-end">
+          <label tabindex="0" class="btn btn-ghost btn-circle avatar">
+            <div class="w-10 border-solid border-2 rounded-full">
+              <img th:src="${#authentication.principal.getAttributes().get('avatar_url')}" />
+            </div>
+          </label>
+          <ul
+            tabindex="0"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-surface-100 rounded-box w-52"
+          >
+            <li>
+              <h3
+                class="menu-title disabled"
+                th:text="${#authentication.getPrincipal().getAttributes().get('login')}"
+              ></h3>
+            </li>
+            <li>
+              <form th:action="@{/logout}" method="post" class="flex">
+                <button type="submit" class="text-start grow">Logout</button>
+              </form>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>

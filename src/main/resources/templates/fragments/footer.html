@@ -1,0 +1,18 @@
+<footer class="footer items-center p-4 bg-neutral text-neutral-content" th:fragment="default">
+  <aside class="grid-flow-col items-center">
+    <svg class="fill-current mr-2" aria-hidden="true" height="48" width="48" viewBox="0 0 320 320">
+      <path th:replace="~{fragments/icons :: elfwatch}" />
+    </svg>
+    <div>
+      <p>ELF Watch</p>
+      <p th:text="'Copyright © ' + ${#dates.year(#dates.createNow())} + ' - All rights reserved'"></p>
+    </div>
+  </aside>
+  <nav class="grid-flow-col gap-4 md:place-self-center md:justify-self-end">
+    <a href="https://github.com/zoftko"
+      ><svg class="fill-current" aria-hidden="true" height="24" viewBox="0 0 16 16" width="24">
+        <path th:replace="~{fragments/icons :: github}" d="" />
+      </svg>
+    </a>
+  </nav>
+</footer>

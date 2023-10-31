@@ -20,6 +20,8 @@ import org.springframework.security.web.context.SecurityContextHolderFilter;
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    public static final String AUTHORITY_OAUTH2_USER = "OAUTH2_USER";
+
     @Value("${felf.github.app.webhook.secret}")
     private String ghWebhookSecret;
 
@@ -48,7 +50,7 @@ public class SecurityConfiguration {
                     .requestMatchers(LOGIN_MAPPING, "/static/**")
                     .permitAll()
                     .anyRequest()
-                    .hasAuthority("OAUTH2_USER")
+                    .hasAuthority(AUTHORITY_OAUTH2_USER)
             )
             .csrf(withDefaults())
             .oauth2Login(oauth2 -> oauth2.loginPage(LOGIN_MAPPING).defaultSuccessUrl("/"))

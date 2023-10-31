@@ -1,25 +1,25 @@
 package com.zoftko.felf.controllers;
 
-import java.util.HashMap;
-import java.util.Map;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @Controller
 public class StaticController {
 
     public static final String LOGIN_MAPPING = "/login";
 
-    private static final Map<String, String> oAuthProviderMap = new HashMap<>();
-
-    static {
-        oAuthProviderMap.put("github", "GitHub");
-    }
-
     @GetMapping(LOGIN_MAPPING)
-    public String login(Model model) {
-        model.addAttribute("providers", oAuthProviderMap);
+    public String login(@RequestParam(name = "signup", required = false) String signUp, Model model) {
+        String message;
+        if (signUp != null) {
+            message = "No signup required, simply log in with your GitHub account to get started";
+        } else {
+            message = "Welcome back, please log in";
+        }
+        model.addAttribute("welcomeMessage", message);
+
         return "login";
     }
 }

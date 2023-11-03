@@ -13,8 +13,14 @@
           </label>
           <ul
             tabindex="0"
-            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-base-100/20 rounded-box w-52"
+            class="menu menu-sm dropdown-content mt-3 z-[1] p-2 shadow bg-surface-100 rounded-box w-52"
           >
+            <li>
+              <h3
+                class="menu-title disabled"
+                th:text='${#authentication.getPrincipal().getAttributes().get("login")}'
+              ></h3>
+            </li>
             <li>
               <form th:action="@{/logout}" method="post" class="flex">
                 <button type="submit" class="text-start grow">Logout</button>

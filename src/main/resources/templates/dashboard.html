@@ -5,10 +5,12 @@
       layout:fragment="content"
       class="max-w-screen-md mx-auto grow p-4 flex place-items-center container"
     >
-      <div th:if="${installations.isEmpty()}">
-        <p>Welcome!</p>
-        <p>To get started, please install the application</p>
-        <a href="https://github.com/apps/zoftko-felf/installations/new/">Install</a>
+      <div th:if="${installations.isEmpty()}" class="flex flex-col gap-4 items-center m-auto">
+        <h1 class="text-4xl">Welcome!</h1>
+        <h2 class="text-2xl">To get started, please install the application</h2>
+        <a role="button" class="btn btn-primary" href="https://github.com/apps/elf-watch/installations/new"
+          >Install</a
+        >
       </div>
     </main>
   </body>

@@ -1,6 +1,5 @@
 package com.zoftko.felf.ut.services;
 
-import static com.zoftko.felf.services.WebhookService.ACTION_CREATED;
 import static com.zoftko.felf.services.WebhookService.ACTION_DELETED;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -33,22 +32,23 @@ class WebhookServiceTests {
     }
 
     JsonNode createInstallationJsonNode(
-        String action,
         int installationId,
         int accountId,
         int targetId,
-        String targetType
+        int senderId,
+        String accountLogin
     ) throws JSONException, JsonProcessingException {
         JSONObject payload = new JSONObject()
-            .put("action", action)
+            .put("action", WebhookService.ACTION_CREATED)
             .put(
                 "installation",
                 new JSONObject()
                     .put("id", installationId)
-                    .put("account", new JSONObject().put("id", accountId))
+                    .put("account", new JSONObject().put("id", accountId).put("login", accountLogin))
                     .put("target_id", targetId)
-                    .put("target_type", targetType)
-            );
+                    .put("target_type", "User")
+            )
+            .put("sender", new JSONObject().put("id", senderId));
 
         return objectMapper.readTree(payload.toString());
     }
@@ -60,16 +60,17 @@ class WebhookServiceTests {
 
         webhookService.processEvent(
             WebhookService.EVENT_INSTALLATION,
-            createInstallationJsonNode(ACTION_CREATED, installationId, 1123, 42312, "User")
+            createInstallationJsonNode(installationId, 1123, 42312, 56, "bach")
         );
         var installationOpt = installationRepository.findById(installationId);
-
         assertThat(installationOpt).isPresent();
 
         var installation = installationOpt.get();
+        assertThat(installation.getSender()).isEqualTo(56);
         assertThat(installation.getAccount()).isEqualTo(1123);
         assertThat(installation.getTarget()).isEqualTo(42312);
         assertThat(installation.getTargetType()).isEqualTo("User");
+        assertThat(installation.getAccountLogin()).isEqualTo("bach");
     }
 
     @Test
@@ -79,7 +80,7 @@ class WebhookServiceTests {
 
         webhookService.processEvent(
             WebhookService.EVENT_INSTALLATION,
-            createInstallationJsonNode(ACTION_CREATED, installationId, 1234, 5678, "User")
+            createInstallationJsonNode(installationId, 1234, 5678, 987, "anton")
         );
         assertThat(installationRepository.findById(installationId)).isPresent();
 

@@ -21,6 +21,6 @@ public class GithubService {
     }
 
     public List<Installation> getUserInstallations(Integer id) {
-        return installationRepository.findByAccount(id);
+        return installationRepository.findBySender(id);
     }
 }

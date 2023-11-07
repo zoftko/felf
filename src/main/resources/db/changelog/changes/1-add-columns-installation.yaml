@@ -1,0 +1,18 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1-add-columns-installation
+      author: anton
+      changes:
+        - addColumn:
+            tableName: installation
+            columns:
+              - column:
+                  name: account_login
+                  type: varchar(128)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sender
+                  type: int
+                  constraints:
+                    nullable: false

@@ -1,10 +1,9 @@
 package com.zoftko.felf.entities;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 
 @Entity
 public class Installation {
@@ -12,21 +11,35 @@ public class Installation {
     @Id
     private Integer id;
 
-    @NotNull
+    @Positive
     private Integer account;
 
-    @NotNull
+    @Positive
     private Integer target;
 
     @NotBlank
-    @Column(length = 24, columnDefinition = "char")
     private String targetType;
 
-    public Installation(Integer id, Integer account, Integer target, String targetType) {
+    @NotBlank
+    private String accountLogin;
+
+    @Positive
+    private Integer sender;
+
+    public Installation(
+        Integer id,
+        Integer account,
+        Integer target,
+        String targetType,
+        String accountLogin,
+        Integer sender
+    ) {
         this.id = id;
         this.account = account;
         this.target = target;
-        this.targetType = targetType;
+        this.targetType = targetType.trim();
+        this.accountLogin = accountLogin.trim();
+        this.sender = sender;
     }
 
     public Installation() {}
@@ -60,6 +73,22 @@ public class Installation {
     }
 
     public void setTargetType(String type) {
-        this.targetType = type;
+        this.targetType = type.trim();
+    }
+
+    public String getAccountLogin() {
+        return accountLogin;
+    }
+
+    public void setAccountLogin(String accountLogin) {
+        this.accountLogin = accountLogin.trim();
+    }
+
+    public Integer getSender() {
+        return sender;
+    }
+
+    public void setSender(Integer sender) {
+        this.sender = sender;
     }
 }

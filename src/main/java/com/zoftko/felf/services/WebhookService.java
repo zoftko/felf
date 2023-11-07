@@ -28,12 +28,14 @@ public class WebhookService {
     private Installation jsonToInstallation(JsonNode json) {
         JsonNode installation = json.get(EVENT_INSTALLATION);
 
-        int installationId = installation.path("id").asInt(-1);
-        int accountId = installation.path("account").path("id").asInt(-1);
-        int targetId = installation.path("target_id").asInt(-1);
-        String targetType = installation.path("target_type").asText("");
+        int installationId = installation.get("id").asInt();
+        int accountId = installation.get("account").get("id").asInt();
+        int targetId = installation.get("target_id").asInt();
+        int senderId = json.get("sender").get("id").asInt();
+        String targetType = installation.get("target_type").asText();
+        String accountLogin = installation.get("account").get("login").asText();
 
-        return new Installation(installationId, accountId, targetId, targetType);
+        return new Installation(installationId, accountId, targetId, targetType, accountLogin, senderId);
     }
 
     private void processInstallationEvent(JsonNode payload) {
@@ -42,7 +44,13 @@ public class WebhookService {
             case ACTION_DELETED -> installationRepository.deleteById(
                 payload.path(EVENT_INSTALLATION).path("id").asInt(-1)
             );
-            case ACTION_CREATED -> installationRepository.save(jsonToInstallation(payload));
+            case ACTION_CREATED -> {
+                try {
+                    installationRepository.save(jsonToInstallation(payload));
+                } catch (NullPointerException exception) {
+                    log.error("invalid payload for installation action '{}' received", action);
+                }
+            }
             default -> log.info("unknown installation action '{}' provided", action);
         }
     }

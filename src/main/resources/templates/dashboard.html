@@ -12,6 +12,14 @@
           >Install</a
         >
       </div>
+      <th:block th:if="${installations.size()}">
+        <div class="flex flex-col">
+          <label for="projectSelect" class="label">Projects</label>
+          <select id="projectSelect" class="select">
+            <option th:each="installation : ${installations}">[[${installation.accountLogin}]]</option>
+          </select>
+        </div>
+      </th:block>
     </main>
   </body>
 </html>

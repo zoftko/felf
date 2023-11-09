@@ -35,3 +35,4 @@ build/
 ### NPM ###
 node_modules/
 src/main/resources/static/felf.css
+src/main/resources/static/htmx.min.js

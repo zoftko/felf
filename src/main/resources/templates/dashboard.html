@@ -1,10 +1,7 @@
 <!doctype html>
 <html lang="en" layout:decorate="~{layouts/full}">
   <body>
-    <main
-      layout:fragment="content"
-      class="max-w-screen-md mx-auto grow p-4 flex place-items-center container"
-    >
+    <main layout:fragment="content" class="mx-auto grow p-4 flex place-items-center container">
       <div th:if="${installations.isEmpty()}" class="flex flex-col gap-4 items-center m-auto">
         <h1 class="text-4xl">Welcome!</h1>
         <h2 class="text-2xl">To get started, please install the application</h2>
@@ -13,11 +10,41 @@
         >
       </div>
       <th:block th:if="${installations.size()}">
-        <div class="flex flex-col">
-          <label for="projectSelect" class="label">Projects</label>
-          <select id="projectSelect" class="select">
-            <option th:each="installation : ${installations}">[[${installation.accountLogin}]]</option>
-          </select>
+        <div class="flex flex-col mb-auto">
+          <div class="flex items-center">
+            <label for="projectSelect" class="label text-xl font-bold mr-2">Accounts</label>
+            <div
+              class="tooltip tooltip-bottom"
+              data-tip="These are the accounts the application has access to."
+            >
+              <svg class="fill-current" height="18" width="18" viewBox="0 0 16 16">
+                <path th:replace="~{fragments/icons :: question}" d="" />
+              </svg>
+            </div>
+          </div>
+          <div class="mt-3 flex items-center">
+            <div class="avatar mr-4">
+              <div class="w-12 mr-2 rounded-full">
+                <img
+                  id="account-avatar"
+                  th:src="@{https://avatars.githubusercontent.com/u/{id}?v=4(id=${installations.get(0).account})}"
+                  alt="Account Avatar"
+                />
+              </div>
+            </div>
+            <select
+              id="projectSelect"
+              class="select"
+              onchange="document.getElementById('account-avatar').src = `https://avatars.githubusercontent.com/u/${this.options[this.selectedIndex].dataset.account}?v=4`"
+            >
+              <option
+                th:each="installation : ${installations}"
+                th:data-account="${installation.getAccount()}"
+              >
+                [[${installation.accountLogin}]]
+              </option>
+            </select>
+          </div>
         </div>
       </th:block>
     </main>

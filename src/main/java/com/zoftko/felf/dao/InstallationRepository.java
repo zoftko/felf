@@ -1,9 +1,9 @@
 package com.zoftko.felf.dao;
 
 import com.zoftko.felf.entities.Installation;
-import java.util.List;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InstallationRepository extends JpaRepository<Installation, Integer> {
-    List<Installation> findBySender(Integer sender);
+    Optional<Installation> findByAccountLogin(String accountLogin);
 }

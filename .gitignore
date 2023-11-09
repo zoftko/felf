@@ -33,5 +33,6 @@ build/
 .vscode/
 
 ### NPM ###
+*.min.js
 node_modules/
-src/main/resources/static/felf.css
+src/main/resources/static/css/felf.css

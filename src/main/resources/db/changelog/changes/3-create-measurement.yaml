@@ -1,0 +1,40 @@
+databaseChangeLog:
+  - changeSet:
+      id: 3-create-measurement
+      author: anton
+      changes:
+        - createTable:
+            tableName: measurement
+            columns:
+              - column:
+                  name: id
+                  type: bigserial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: created_at
+                  type: datetime
+                  constraints:
+                    nullable: false
+              - column:
+                  name: project_id
+                  type: int
+              - column:
+                  name: branch
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sha
+                  type: char(40)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: text_size
+                  type: int
+              - column:
+                  name: bss_size
+                  type: int
+              - column:
+                  name: data_size
+                  type: int

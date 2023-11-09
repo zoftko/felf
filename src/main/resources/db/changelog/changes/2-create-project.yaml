@@ -1,0 +1,34 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2-create-project
+      author: anton
+      changes:
+        - createTable:
+            tableName: project
+            columns:
+              - column:
+                  name: id
+                  type: serial
+                  constraints:
+                    primaryKey: true
+              - column:
+                  name: installation_id
+                  type: int
+                  constraints:
+                    nullable: false
+              - column:
+                  name: full_name
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: default_branch
+                  type: varchar(256)
+              - column:
+                  name: token
+                  type: varchar(256)
+                  constraints:
+                    nullable: false
+        - addUniqueConstraint:
+            tableName: project
+            columnNames: full_name

@@ -32,7 +32,7 @@ class WebhookSecretFilterTests {
         client =
             WebTestClient
                 .bindToServer()
-                .baseUrl("http://localhost:" + port)
+                .baseUrl("http://127.0.0.1:" + port)
                 .defaultHeader(HttpHeaders.CONTENT_TYPE, "application/json")
                 .defaultHeader(WebhookController.HEADER_EVENT, "just testing")
                 .build();

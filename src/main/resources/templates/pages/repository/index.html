@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en" layout:decorate="~{layouts/full}">
+  <head>
+    <script defer th:src="@{/static/js/repository.js}"></script>
+  </head>
+  <body>
+    <main layout:fragment="content" class="mx-auto grow p-4 flex flex-col container">
+      <div class="text-center" th:unless="${projectPresent or isOwner}">
+        <h1 class="text-2xl md:text-6xl font-bold mt-8">Not found</h1>
+        <div class="mt-6">
+          <p class="text-4xl md:text-6xl mb-4">🧐</p>
+          <p class="text-xl md:text-2xl">This repository does not exist or has not been configured.</p>
+          <p class="text-xl md:text-2xl mt-4">
+            If you are the owner of this repository
+            <a class="underline" href="https://github.com/apps/elf-watch/installations/new"
+              >install ELF Watch</a
+            >
+            to get started.
+          </p>
+        </div>
+      </div>
+      <div th:if="${projectPresent or isOwner}">
+        <div class="flex items-center mt-6">
+          <div class="mb-8 pr-8 pb-6 border-b-neutral-content border-b-2 flex">
+            <h1 class="font-bold text-2xl md:text-3xl inline-block" th:text="${fullName}"></h1>
+          </div>
+          <div class="dropdown dropdown-end mb-auto ml-auto" th:if="${isOwner}">
+            <div tabindex="0" role="button" class="btn btn-sm btn-circle btn-ghost">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="currentColor"
+                viewBox="0 0 512 512"
+                stroke="currentColor"
+              >
+                <path th:replace="~{fragments/icons :: settings}" d=""></path>
+              </svg>
+            </div>
+            <ul
+              tabindex="0"
+              class="dropdown-content z-[2] menu menu-sm p-2 shadow bg-surface-100 rounded-box w-52"
+            >
+              <li>
+                <a onclick="modal_token.showModal()">New Access Token</a>
+              </li>
+              <li><a>Delete</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="relative inline-block shadow-xl">
+          <div
+            class="absolute z-10 w-full h-full text-center text-xl flex flex-col justify-center items-center p-8"
+            th:if="${!projectPresent or demo}"
+          >
+            <th:block th:if="${!projectPresent and isOwner}">
+              <p>Almost there!</p>
+              <p>Generate an access token to start collecting statistics.</p>
+              <button class="btn btn-outline btn-accent px-10 mt-6" onclick="modal_token.showModal()">
+                Generate Token
+              </button>
+            </th:block>
+            <th:block th:if="${demo and projectPresent}">
+              <p>No measurements yet.</p>
+              <p>😔</p>
+              <a class="text-sm underline mt-auto mr-auto" href="#" th:if="${isOwner}"
+                >Setup your CI pipeline to start.</a
+              >
+            </th:block>
+          </div>
+          <table
+            class="table min-w-[320px] md:min-w-[600px]"
+            th:classappend="${!projectPresent or demo ? 'blur-[6px]' : ''}"
+          >
+            <thead class="bg-base-200">
+              <tr class="font-bold text-xl">
+                <th>Measurement</th>
+                <th>Value</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="text-lg" th:each="measurement : ${measurements}">
+                <td th:text="${measurement.key}"></td>
+                <td th:text="${measurement.value}"></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <dialog id="modal_token" class="modal">
+        <div class="modal-box p-6">
+          <div class="flex">
+            <div class="mr-6">
+              <h3 class="font-bold text-xl mb-4">Generating an access token</h3>
+              <p>
+                This access token will be used in your CI pipeline. Do not share it with anyone. Once
+                generated you will only be able to see it once.
+              </p>
+              <p class="text-sm mt-4">Note: Generating a new token will invalidate the previous one.</p>
+            </div>
+            <form class="ml-auto" method="dialog">
+              <button class="btn btn-circle btn-ghost btn-sm">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="h-6 w-6"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </form>
+          </div>
+          <form th:replace="~{pages/repository/token :: token}"></form>
+        </div>
+      </dialog>
+    </main>
+  </body>
+</html>

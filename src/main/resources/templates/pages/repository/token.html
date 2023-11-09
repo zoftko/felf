@@ -1,0 +1,32 @@
+<form th:hx-post="@{/{owner}/{repo}/token(owner=${owner},repo=${repo})}" id="token-form" th:fragment="token">
+  <label class="form-control mt-6" hx-target="this" hx-swap="outerHTML">
+    <div class="label">
+      <span class="label-text">Token</span>
+    </div>
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <div class="join">
+      <input
+        type="text"
+        class="input input-bordered join-item"
+        th:classappend="${error ? 'input-error' : ''}"
+        th:value="${token}"
+        placeholder="••••••••"
+        id="token"
+        disabled
+      />
+      <button class="btn join-item" onclick="clipboardCopy()">Copy</button>
+    </div>
+    <div class="label">
+      <span
+        id="token-error"
+        class="label-text-alt text-error"
+        th:classappend="${error ? 'visible' : 'invisible'}"
+        th:text="${errorMessage}"
+      ></span>
+    </div>
+  </label>
+  <button class="btn btn-primary mt-2">
+    <span class="loading loading-spinner hidden"></span>
+    <span class="font-normal">Generate</span>
+  </button>
+</form>

@@ -1,6 +1,7 @@
 package com.zoftko.felf.controllers;
 
 import com.zoftko.felf.entities.Installation;
+import com.zoftko.felf.models.InstallationRepos;
 import com.zoftko.felf.services.GithubService;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,22 @@ public class AppController {
         List<Installation> installations = githubService.getUserInstallations(
             Integer.parseInt(principal.getName())
         );
+        var defaultInstallation = installations.getFirst();
+        var installationRepos = githubService
+            .getInstallationRepositories(defaultInstallation.getId())
+            .block();
+
+        int totalRepos = 0;
+        List<InstallationRepos.Repo> repos = null;
+        if (installationRepos != null) {
+            totalRepos = installationRepos.totalCount();
+            repos = installationRepos.repositories();
+        }
+
+        model.addAttribute("repos", repos);
+        model.addAttribute("totalRepos", totalRepos);
         model.addAttribute("installations", installations);
+        model.addAttribute("defaultInstallation", defaultInstallation);
 
         return "dashboard";
     }

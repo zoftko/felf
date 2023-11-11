@@ -2,9 +2,13 @@ package com.zoftko.felf.services;
 
 import com.zoftko.felf.dao.InstallationRepository;
 import com.zoftko.felf.entities.Installation;
+import com.zoftko.felf.models.InstallationRepos;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 @Service
 public class GithubService {
@@ -14,13 +18,37 @@ public class GithubService {
     public static final String QUALIFIER_APP_TOKEN = "gh-app";
 
     private final InstallationRepository installationRepository;
+    private final WebClient client;
 
     @Autowired
-    public GithubService(InstallationRepository installationRepository) {
+    public GithubService(
+        InstallationRepository installationRepository,
+        @Qualifier(QUALIFIER_INSTALL_TOKEN) WebClient client
+    ) {
+        this.client = client;
         this.installationRepository = installationRepository;
     }
 
-    public List<Installation> getUserInstallations(Integer id) {
+    public List<Installation> getUserInstallations(int id) {
         return installationRepository.findBySender(id);
+    }
+
+    public Mono<InstallationRepos> getInstallationRepositories(int installation) {
+        return getInstallationRepositories(installation, 1, 30);
+    }
+
+    public Mono<InstallationRepos> getInstallationRepositories(int installation, int page, int perPage) {
+        return client
+            .get()
+            .uri(builder ->
+                builder
+                    .path("/installation/repositories")
+                    .queryParam("page", page)
+                    .queryParam("per_page", perPage)
+                    .build()
+            )
+            .header(HTTP_HEADER_GH_UID, Integer.toString(installation))
+            .retrieve()
+            .bodyToMono(InstallationRepos.class);
     }
 }

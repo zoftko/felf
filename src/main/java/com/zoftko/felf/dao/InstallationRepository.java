@@ -6,4 +6,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface InstallationRepository extends JpaRepository<Installation, Integer> {
     List<Installation> findBySender(Integer sender);
+    Installation findBySenderAndId(Integer sender, Integer id);
 }

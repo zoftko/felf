@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en" layout:decorate="~{layouts/full}">
   <body>
-    <main layout:fragment="content" class="mx-auto grow p-4 flex place-items-center container">
+    <main layout:fragment="content" class="mx-auto grow p-4 flex flex-col container">
       <div th:if="${installations.isEmpty()}" class="flex flex-col gap-4 items-center m-auto">
         <h1 class="text-4xl">Welcome!</h1>
         <h2 class="text-2xl">To get started, please install the application</h2>
@@ -10,7 +10,7 @@
         >
       </div>
       <th:block th:if="${installations.size()}">
-        <div class="flex flex-col mb-auto">
+        <div class="flex flex-col">
           <div class="flex flex-col items-start">
             <label for="projectSelect" class="label text-xl font-bold mr-2">Accounts</label>
             <a class="link text-sm opacity-70" href="https://github.com/apps/elf-watch/installations/new"
@@ -40,6 +40,11 @@
             </select>
           </div>
         </div>
+        <div
+          class="mx-auto mt-10"
+          th:hx-get="@{/fragments/{id}/projects(id=${defaultInstallation.getId()})}"
+          hx-trigger="load"
+        ></div>
       </th:block>
     </main>
   </body>

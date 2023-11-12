@@ -43,24 +43,6 @@
           </div>
         </div>
       </th:block>
-      <th:block th:if="${totalRepos} gt 0">
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Flash</th>
-              <th>RAM</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr th:each="repo : ${repos}">
-              <td th:text="${repo.name()}"></td>
-              <td></td>
-              <td></td>
-            </tr>
-          </tbody>
-        </table>
-      </th:block>
     </main>
   </body>
 </html>

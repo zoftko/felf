@@ -6,6 +6,7 @@ import com.zoftko.felf.models.InstallationRepos;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -16,6 +17,8 @@ public class GithubService {
     public static final String HTTP_HEADER_GH_UID = "X-Github-Uid";
     public static final String QUALIFIER_INSTALL_TOKEN = "gh-install";
     public static final String QUALIFIER_APP_TOKEN = "gh-app";
+    public static final int DEFAULT_PAGE = 1;
+    public static final int DEFAULT_PAGE_SIZE = 30;
 
     private final InstallationRepository installationRepository;
     private final WebClient client;
@@ -33,8 +36,8 @@ public class GithubService {
         return installationRepository.findBySender(id);
     }
 
-    public Mono<InstallationRepos> getInstallationRepositories(int installation) {
-        return getInstallationRepositories(installation, 1, 30);
+    public boolean userOwnsInstallation(int userId, int installationId) {
+        return installationRepository.findBySenderAndId(userId, installationId) != null;
     }
 
     public Mono<InstallationRepos> getInstallationRepositories(int installation, int page, int perPage) {
@@ -49,6 +52,7 @@ public class GithubService {
             )
             .header(HTTP_HEADER_GH_UID, Integer.toString(installation))
             .retrieve()
-            .bodyToMono(InstallationRepos.class);
+            .bodyToMono(InstallationRepos.class)
+            .cache();
     }
 }

@@ -1,0 +1,31 @@
+<table th:if="${!projects.isEmpty()}">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Flash</th>
+      <th>RAM</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr th:each="project : ${projects}">
+      <td th:text="${project.getFullName()}"></td>
+      <td>Unknown</td>
+      <td>Unknown</td>
+    </tr>
+  </tbody>
+</table>
+<th:block th:if="${projects.isEmpty()}">
+  <div class="flex flex-col items-center">
+    <h2 class="text-2xl">No projects have been set up</h2>
+    <h2 class="text-2xl">Add one to get started</h2>
+    <button class="btn btn-primary mt-4" id="show_modal_btn" onclick="add_repos_modal.showModal()">
+      Add
+    </button>
+  </div>
+  <dialog class="modal" id="add_repos_modal">
+    <form method="dialog">
+      <button class="btn">X</button>
+    </form>
+    <div th:hx-get="@{/fragments/{id}/repos(id=${installationId})}" hx-trigger="from:#show_modal_btn"></div>
+  </dialog>
+</th:block>

@@ -37,6 +37,23 @@ public class AppController {
         return "dashboard";
     }
 
+    @GetMapping("/fragments/{installationId}/projects")
+    public String getProjects(
+        @PathVariable Integer installationId,
+        @AuthenticationPrincipal OAuth2User principal,
+        Model model
+    ) {
+        if (
+            githubService.userForbiddenFromInstallation(Integer.parseInt(principal.getName()), installationId)
+        ) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+        }
+        model.addAttribute("projects", githubService.getInstallationProjects(installationId));
+        model.addAttribute("installationId", installationId);
+
+        return "fragments/projectTable";
+    }
+
     @GetMapping("/fragments/{installationId}/repos")
     public String getRepos(
         @PathVariable Integer installationId,
@@ -45,7 +62,9 @@ public class AppController {
         @RequestParam(defaultValue = "" + GithubService.DEFAULT_PAGE_SIZE) int size,
         Model model
     ) {
-        if (!githubService.userOwnsInstallation(Integer.parseInt(principal.getName()), installationId)) {
+        if (
+            githubService.userForbiddenFromInstallation(Integer.parseInt(principal.getName()), installationId)
+        ) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
         }
 
@@ -55,6 +74,6 @@ public class AppController {
         model.addAttribute("totalCount", response.map(InstallationRepos::totalCount).orElse(0));
         model.addAttribute("repos", response.map(InstallationRepos::repositories).orElse(null));
 
-        return "fragments/repoList";
+        return "addRepoModal";
     }
 }

@@ -1,12 +1,13 @@
 package com.zoftko.felf.services;
 
 import com.zoftko.felf.dao.InstallationRepository;
+import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Installation;
+import com.zoftko.felf.entities.Project;
 import com.zoftko.felf.models.InstallationRepos;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -21,14 +22,17 @@ public class GithubService {
     public static final int DEFAULT_PAGE_SIZE = 30;
 
     private final InstallationRepository installationRepository;
+    private final ProjectRepository projectRepository;
     private final WebClient client;
 
     @Autowired
     public GithubService(
         InstallationRepository installationRepository,
+        ProjectRepository projectRepository,
         @Qualifier(QUALIFIER_INSTALL_TOKEN) WebClient client
     ) {
         this.client = client;
+        this.projectRepository = projectRepository;
         this.installationRepository = installationRepository;
     }
 
@@ -36,8 +40,12 @@ public class GithubService {
         return installationRepository.findBySender(id);
     }
 
-    public boolean userOwnsInstallation(int userId, int installationId) {
-        return installationRepository.findBySenderAndId(userId, installationId) != null;
+    public boolean userForbiddenFromInstallation(int userId, int installationId) {
+        return installationRepository.findBySenderAndId(userId, installationId) == null;
+    }
+
+    public List<Project> getInstallationProjects(int installationId) {
+        return projectRepository.findByInstallationId(installationId);
     }
 
     public Mono<InstallationRepos> getInstallationRepositories(int installation, int page, int perPage) {

@@ -1,4 +1,4 @@
-package com.zoftko.felf.ut.security;
+package com.zoftko.felf.security;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

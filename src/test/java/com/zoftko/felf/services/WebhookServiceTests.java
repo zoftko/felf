@@ -1,4 +1,4 @@
-package com.zoftko.felf.ut.services;
+package com.zoftko.felf.services;
 
 import static com.zoftko.felf.services.WebhookService.*;
 import static org.assertj.core.api.Assertions.assertThat;

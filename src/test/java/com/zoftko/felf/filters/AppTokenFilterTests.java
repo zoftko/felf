@@ -1,4 +1,4 @@
-package com.zoftko.felf.it.filters;
+package com.zoftko.felf.filters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

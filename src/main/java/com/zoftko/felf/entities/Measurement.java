@@ -17,7 +17,7 @@ public class Measurement {
     private LocalDateTime createdAt;
 
     @NotBlank
-    private String branch;
+    private String ref;
 
     @NotBlank
     @Column(columnDefinition = "char(40)")
@@ -53,12 +53,12 @@ public class Measurement {
         this.createdAt = time;
     }
 
-    public String getBranch() {
-        return branch;
+    public String getRef() {
+        return ref;
     }
 
-    public void setBranch(String branch) {
-        this.branch = branch;
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public String getSha() {

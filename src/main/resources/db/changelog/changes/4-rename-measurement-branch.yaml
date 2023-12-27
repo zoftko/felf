@@ -1,0 +1,10 @@
+databaseChangeLog:
+  - changeSet:
+      id: 4-rename-measurement-branch
+      author: anton
+      changes:
+        - renameColumn:
+            tableName: measurement
+            columnDataType: varchar(256)
+            oldColumnName: branch
+            newColumnName: ref

@@ -73,11 +73,11 @@ public class RepositoryController {
                             MKEY,
                             Map.of(
                                 "Text Size",
-                                measurement.getTextSize(),
+                                measurement.getSize().getText(),
                                 "Data Size",
-                                measurement.getDataSize(),
+                                measurement.getSize().getData(),
                                 "BSS Size",
-                                measurement.getBssSize()
+                                measurement.getSize().getBss()
                             )
                         )
                     );

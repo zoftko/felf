@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 5-change-measurement-size
+      author: anton
+      changes:
+        - modifyDataType:
+            tableName: measurement
+            columnName: text_size
+            newDataType: bigint
+        - modifyDataType:
+            tableName: measurement
+            columnName: data_size
+            newDataType: bigint
+        - modifyDataType:
+            tableName: measurement
+            columnName: bss_size
+            newDataType: bigint

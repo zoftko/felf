@@ -23,11 +23,8 @@ public class Measurement {
     @Column(columnDefinition = "char(40)")
     private String sha;
 
-    private Integer textSize;
-
-    private Integer bssSize;
-
-    private Integer dataSize;
+    @Embedded
+    private Size size;
 
     public Long getId() {
         return id;
@@ -69,27 +66,11 @@ public class Measurement {
         this.sha = sha;
     }
 
-    public Integer getTextSize() {
-        return textSize;
+    public Size getSize() {
+        return size;
     }
 
-    public void setTextSize(Integer textSize) {
-        this.textSize = textSize;
-    }
-
-    public Integer getBssSize() {
-        return bssSize;
-    }
-
-    public void setBssSize(Integer bssSize) {
-        this.bssSize = bssSize;
-    }
-
-    public Integer getDataSize() {
-        return dataSize;
-    }
-
-    public void setDataSize(Integer dataSize) {
-        this.dataSize = dataSize;
+    public void setSize(Size size) {
+        this.size = size;
     }
 }

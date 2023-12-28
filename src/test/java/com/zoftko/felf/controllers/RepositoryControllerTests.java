@@ -104,9 +104,9 @@ class RepositoryControllerTests extends BaseControllerTest {
             );
 
         var measurement = new Measurement();
-        measurement.setTextSize(1024);
-        measurement.setDataSize(32);
-        measurement.setBssSize(64);
+        measurement.getSize().setText(1024L);
+        measurement.getSize().setData(32L);
+        measurement.getSize().setBss(64L);
         when(measurementRepository.getLastMeasurementByBranch(project, "main"))
             .thenReturn(Optional.of(measurement));
 

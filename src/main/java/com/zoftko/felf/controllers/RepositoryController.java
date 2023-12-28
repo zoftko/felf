@@ -1,6 +1,6 @@
 package com.zoftko.felf.controllers;
 
-import com.zoftko.felf.dao.MeasurementRepository;
+import com.zoftko.felf.dao.AnalysisRepository;
 import com.zoftko.felf.services.FelfService;
 import java.security.Principal;
 import java.security.SecureRandom;
@@ -20,19 +20,19 @@ public class RepositoryController {
 
     private static final String MKEY = "measurements";
     private final FelfService felfService;
-    private final MeasurementRepository measurementRepository;
+    private final AnalysisRepository analysisRepository;
     private final SecureRandom secureRandom;
     private final PasswordEncoder encoder;
 
     @Autowired
     public RepositoryController(
         FelfService felfService,
-        MeasurementRepository measurementRepository,
+        AnalysisRepository analysisRepository,
         SecureRandom secureRandom,
         PasswordEncoder encoder
     ) {
         this.felfService = felfService;
-        this.measurementRepository = measurementRepository;
+        this.analysisRepository = analysisRepository;
         this.secureRandom = secureRandom;
         this.encoder = encoder;
     }
@@ -66,18 +66,18 @@ public class RepositoryController {
             .project()
             .ifPresent(project -> {
                 model.addAttribute("project", project);
-                measurementRepository
-                    .getLastMeasurementByBranch(project, project.getDefaultBranch())
-                    .ifPresent(measurement ->
+                analysisRepository
+                    .getLastAnalysisByRef(project, project.getDefaultBranch())
+                    .ifPresent(analysis ->
                         model.addAttribute(
                             MKEY,
                             Map.of(
                                 "Text Size",
-                                measurement.getSize().getText(),
+                                analysis.getSize().getText(),
                                 "Data Size",
-                                measurement.getSize().getData(),
+                                analysis.getSize().getData(),
                                 "BSS Size",
-                                measurement.getSize().getBss()
+                                analysis.getSize().getBss()
                             )
                         )
                     );

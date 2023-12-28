@@ -6,9 +6,9 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import com.zoftko.felf.dao.MeasurementRepository;
+import com.zoftko.felf.dao.AnalysisRepository;
+import com.zoftko.felf.entities.Analysis;
 import com.zoftko.felf.entities.Installation;
-import com.zoftko.felf.entities.Measurement;
 import com.zoftko.felf.entities.Project;
 import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.RepositoryInstallation;
@@ -29,7 +29,7 @@ class RepositoryControllerTests extends BaseControllerTest {
     FelfService felfService;
 
     @MockBean
-    MeasurementRepository measurementRepository;
+    AnalysisRepository analysisRepository;
 
     static final int installId = 123;
     static final int senderId = 78;
@@ -71,12 +71,12 @@ class RepositoryControllerTests extends BaseControllerTest {
     }
 
     @Test
-    void projectNoMeasurements() throws Exception {
+    void projectNoAnalysis() throws Exception {
         when(felfService.getProjectData(owner, repo))
             .thenReturn(
                 new ProjectData(fullName, Optional.of(project), Optional.of(installation), repoInstall)
             );
-        when(measurementRepository.getLastMeasurementByBranch(project, "main")).thenReturn(Optional.empty());
+        when(analysisRepository.getLastAnalysisByRef(project, "main")).thenReturn(Optional.empty());
 
         assertThat(
             mockMvc
@@ -97,18 +97,17 @@ class RepositoryControllerTests extends BaseControllerTest {
     }
 
     @Test
-    void projectWithMeasurements() throws Exception {
+    void projectWithAnalysis() throws Exception {
         when(felfService.getProjectData(owner, repo))
             .thenReturn(
                 new ProjectData(fullName, Optional.of(project), Optional.of(installation), repoInstall)
             );
 
-        var measurement = new Measurement();
-        measurement.getSize().setText(1024L);
-        measurement.getSize().setData(32L);
-        measurement.getSize().setBss(64L);
-        when(measurementRepository.getLastMeasurementByBranch(project, "main"))
-            .thenReturn(Optional.of(measurement));
+        var analysis = new Analysis();
+        analysis.getSize().setText(1024L);
+        analysis.getSize().setData(32L);
+        analysis.getSize().setBss(64L);
+        when(analysisRepository.getLastAnalysisByRef(project, "main")).thenReturn(Optional.of(analysis));
 
         assertThat(
             mockMvc.perform(get(getTestUrl).with(githubLogin(1))).andReturn().getModelAndView().getModel()

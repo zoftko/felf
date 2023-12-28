@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
 @Entity
-public class Measurement {
+public class Analysis {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

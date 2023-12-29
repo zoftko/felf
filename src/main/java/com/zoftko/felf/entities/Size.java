@@ -20,6 +20,9 @@ public class Size {
     }
 
     public void setText(Long text) {
+        if (text < 0) {
+            throw new IllegalArgumentException("Text size can't be negative");
+        }
         this.text = text;
     }
 
@@ -28,6 +31,9 @@ public class Size {
     }
 
     public void setData(Long data) {
+        if (text < 0) {
+            throw new IllegalArgumentException("Data size can't be negative");
+        }
         this.data = data;
     }
 
@@ -36,6 +42,9 @@ public class Size {
     }
 
     public void setBss(Long bss) {
+        if (bss < 0) {
+            throw new IllegalArgumentException("BSS size can't be negative");
+        }
         this.bss = bss;
     }
 }

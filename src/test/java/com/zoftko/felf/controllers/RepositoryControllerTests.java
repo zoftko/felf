@@ -10,6 +10,7 @@ import com.zoftko.felf.dao.AnalysisRepository;
 import com.zoftko.felf.entities.Analysis;
 import com.zoftko.felf.entities.Installation;
 import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.entities.Size;
 import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.RepositoryInstallation;
 import com.zoftko.felf.services.FelfService;
@@ -104,6 +105,7 @@ class RepositoryControllerTests extends BaseControllerTest {
             );
 
         var analysis = new Analysis();
+        analysis.setSize(new Size());
         analysis.getSize().setText(1024L);
         analysis.getSize().setData(32L);
         analysis.getSize().setBss(64L);

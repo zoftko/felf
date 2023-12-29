@@ -3,6 +3,7 @@ package com.zoftko.felf.config;
 import static com.zoftko.felf.controllers.StaticController.LOGIN_MAPPING;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.zoftko.felf.controllers.AnalysisController;
 import com.zoftko.felf.controllers.WebhookController;
 import com.zoftko.felf.security.WebhookAuthenticationToken;
 import com.zoftko.felf.security.WebhookSecretFilter;
@@ -14,6 +15,7 @@ import org.springframework.core.annotation.Order;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
@@ -29,8 +31,20 @@ public class SecurityConfiguration {
     private String ghWebhookSecret;
 
     @Bean
+    @Order(2)
+    public SecurityFilterChain analysisFilterChain(HttpSecurity http) throws Exception {
+        http
+            .securityMatcher(AnalysisController.MAPPING)
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
+            .csrf(AbstractHttpConfigurer::disable)
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+
+        return http.build();
+    }
+
+    @Bean
     @Order(1)
-    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain webhookFilterChain(HttpSecurity http) throws Exception {
         http
             .securityMatcher(WebhookController.MAPPING)
             .authorizeHttpRequests(authorize ->

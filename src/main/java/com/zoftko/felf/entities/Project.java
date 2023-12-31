@@ -24,6 +24,9 @@ public class Project {
     @NotBlank
     private String token;
 
+    @Column(name = "private")
+    private boolean isPrivate;
+
     public Integer getId() {
         return id;
     }
@@ -79,5 +82,13 @@ public class Project {
         setToken(encoder.encode(newToken));
 
         return newToken;
+    }
+
+    public boolean getPrivate() {
+        return isPrivate;
+    }
+
+    public void setPrivate(boolean aPrivate) {
+        isPrivate = aPrivate;
     }
 }

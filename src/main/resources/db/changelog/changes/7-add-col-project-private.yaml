@@ -1,0 +1,12 @@
+databaseChangeLog:
+  - changeSet:
+      id: 7-add-col-project-private.yaml
+      author: anton
+      changes:
+        - addColumn:
+            tableName: project
+            columns:
+              - column:
+                  name: private
+                  type: bool
+                  defaultValueBoolean: false

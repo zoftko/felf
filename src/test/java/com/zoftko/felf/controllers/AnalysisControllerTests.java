@@ -3,8 +3,8 @@ package com.zoftko.felf.controllers;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.within;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -40,6 +40,19 @@ class AnalysisControllerTests extends BaseControllerTest {
         """
         {
             "ref": "main",
+            "sha": "2e4270767bc75244a96de06dfca512887d4b3adc",
+            "size": {
+                "text": 940,
+                "data": 2,
+                "bss": 6
+            }
+        }
+        """;
+
+    String mergePayload =
+        """
+        {
+            "ref": "4/merge",
             "sha": "2e4270767bc75244a96de06dfca512887d4b3adc",
             "size": {
                 "text": 940,
@@ -119,5 +132,21 @@ class AnalysisControllerTests extends BaseControllerTest {
 
         postAnalysis("Bearer correct_token123", invalidPayload)
             .andExpect(status().is(HttpStatus.BAD_REQUEST.value()));
+    }
+
+    @Test
+    void upsertMergeRequestAnalysis() throws Exception {
+        var argument = ArgumentCaptor.forClass(Analysis.class);
+        var analysis = new Analysis();
+        analysis.setId(5L);
+
+        when(analysisRepository.findByProjectAndRef(any(), eq("4/merge"))).thenReturn(Optional.of(analysis));
+        when(projectRepository.findByFullName(any())).thenReturn(Optional.of(new Project()));
+        when(encoder.matches(any(), any())).thenReturn(true);
+
+        postAnalysis("Bearer mytoken", mergePayload).andExpect(status().isOk());
+
+        verify(analysisRepository).save(argument.capture());
+        assertThat(argument.getValue().getId()).isEqualTo(5);
     }
 }

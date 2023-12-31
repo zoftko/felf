@@ -56,6 +56,11 @@ public class AnalysisController {
 
         analysis.setProject(project.get());
         analysis.setCreatedAt(LocalDateTime.now());
+
+        if (analysis.getRef().endsWith("/merge")) {
+            var existing = analysisRepository.findByProjectAndRef(analysis.getProject(), analysis.getRef());
+            existing.ifPresent(value -> analysis.setId(value.getId()));
+        }
         analysisRepository.save(analysis);
 
         return ResponseEntity.ok().build();

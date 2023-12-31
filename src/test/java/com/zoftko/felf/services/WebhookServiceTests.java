@@ -2,11 +2,16 @@ package com.zoftko.felf.services;
 
 import static com.zoftko.felf.services.WebhookService.*;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.in;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zoftko.felf.dao.InstallationRepository;
+import com.zoftko.felf.dao.ProjectRepository;
+import com.zoftko.felf.entities.Installation;
+import com.zoftko.felf.entities.Project;
+import jakarta.persistence.EntityManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,14 +29,20 @@ import org.springframework.boot.test.system.OutputCaptureExtension;
 class WebhookServiceTests {
 
     @Autowired
+    EntityManager manager;
+
+    @Autowired
     InstallationRepository installationRepository;
+
+    @Autowired
+    ProjectRepository projectRepository;
 
     WebhookService webhookService;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        webhookService = new WebhookService(installationRepository);
+        webhookService = new WebhookService(installationRepository, projectRepository);
     }
 
     JsonNode createInstallationJsonNode(
@@ -54,6 +65,25 @@ class WebhookServiceTests {
             .put("sender", new JSONObject().put("id", senderId));
 
         return objectMapper.readTree(payload.toString());
+    }
+
+    Project createProject() {
+        var install = new Installation();
+        install.setId(12345);
+        install.setAccount(1);
+        install.setSender(234);
+        install.setTarget(12312);
+        install.setTargetType("user");
+        install.setAccountLogin("test");
+        install = installationRepository.save(install);
+
+        var project = new Project();
+        project.setToken("dummy");
+        project.setDefaultBranch("dev");
+        project.setFullName("zoftko/zynth53");
+        project.setInstallation(install);
+
+        return project;
     }
 
     @Test
@@ -124,5 +154,86 @@ class WebhookServiceTests {
         );
 
         assertThat(output.getOut()).contains("unknown installation action");
+    }
+
+    @Test
+    void processRepositoryEditDefaultBranch() throws JsonProcessingException {
+        var project = projectRepository.save(createProject());
+        webhookService.processEvent(
+            EVENT_REPOSITORY,
+            objectMapper.readTree(
+                String.format(
+                    """
+                    {
+                        "action": "edited",
+                        "repository": {
+                            "full_name": "%s",
+                            "default_branch": "main"
+                        }
+                    }
+                    """,
+                    project.getFullName()
+                )
+            )
+        );
+
+        manager.clear();
+        var updatedProject = projectRepository.findById(project.getId());
+        assertThat(updatedProject).isPresent();
+        assertThat(updatedProject.get().getDefaultBranch()).isEqualTo("main");
+    }
+
+    @Test
+    void processRepositoryPrivatized() throws JsonProcessingException {
+        var project = projectRepository.save(createProject());
+        assertThat(project.getPrivate()).isFalse();
+
+        webhookService.processEvent(
+            EVENT_REPOSITORY,
+            objectMapper.readTree(
+                String.format(
+                    """
+                    {
+                        "action": "privatized",
+                        "repository": {
+                            "full_name": "%s"
+                        }
+                    }
+                    """,
+                    project.getFullName()
+                )
+            )
+        );
+
+        manager.clear();
+        assertThat(projectRepository.findById(project.getId()).get().getPrivate()).isTrue();
+    }
+
+    @Test
+    void processRepositoryPublicized() throws JsonProcessingException {
+        var project = createProject();
+        project.setPrivate(true);
+        project = projectRepository.save(project);
+        assertThat(project.getPrivate()).isTrue();
+
+        webhookService.processEvent(
+            EVENT_REPOSITORY,
+            objectMapper.readTree(
+                String.format(
+                    """
+                    {
+                        "action": "publicized",
+                        "repository": {
+                            "full_name": "%s"
+                        }
+                    }
+                    """,
+                    project.getFullName()
+                )
+            )
+        );
+
+        manager.clear();
+        assertThat(projectRepository.findById(project.getId()).get().getPrivate()).isFalse();
     }
 }

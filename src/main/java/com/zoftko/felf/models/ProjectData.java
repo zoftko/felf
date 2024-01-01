@@ -8,7 +8,8 @@ public record ProjectData(
     String fullName,
     Optional<Project> project,
     Optional<Installation> installation,
-    RepositoryInstallation repoInstall
+    RepositoryInstallation repoInstall,
+    Repository repository
 ) {
     public boolean isOwner(int userId) {
         if (repoInstall == null) {
@@ -32,13 +33,15 @@ public record ProjectData(
     }
 
     public Project initializeProject() throws IllegalStateException {
-        if (installation.isEmpty() || repoInstall == null) {
+        if (installation.isEmpty() || repoInstall == null || repository == null) {
             throw new IllegalStateException();
         }
 
         var initProject = new Project();
         initProject.setFullName(fullName());
+        initProject.setPrivate(repository.isPrivate());
         initProject.setInstallation(installation.get());
+        initProject.setDefaultBranch(repository.defaultBranch());
 
         return initProject;
     }

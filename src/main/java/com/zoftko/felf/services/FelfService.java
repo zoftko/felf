@@ -4,6 +4,7 @@ import com.zoftko.felf.dao.InstallationRepository;
 import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Project;
 import com.zoftko.felf.models.ProjectData;
+import com.zoftko.felf.models.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -40,7 +41,16 @@ public class FelfService {
             .onErrorResume(__ -> Mono.empty())
             .block();
 
-        return new ProjectData(fullName, project, installation, repoInstall);
+        Repository repository = null;
+        if (repoInstall != null) {
+            repository =
+                githubService
+                    .getRepository(repoInstall.id(), owner, repo)
+                    .onErrorResume(__ -> Mono.empty())
+                    .block();
+        }
+
+        return new ProjectData(fullName, project, installation, repoInstall, repository);
     }
 
     @CacheEvict(key = "#project.fullName")

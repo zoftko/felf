@@ -9,6 +9,7 @@ import com.zoftko.felf.dao.InstallationRepository;
 import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Installation;
 import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.models.Repository;
 import com.zoftko.felf.models.RepositoryInstallation;
 import java.util.Map;
 import java.util.Optional;
@@ -43,6 +44,8 @@ class FelfServiceTests {
 
         when(githubService.getRepositoryInstallation(anyString(), anyString()))
             .thenReturn(Mono.just(new RepositoryInstallation(123, Map.of(), null)));
+        when(githubService.getRepository(anyInt(), anyString(), anyString()))
+            .thenReturn(Mono.just(new Repository(name, false, "main")));
         when(installationRepository.findByAccountLogin(anyString()))
             .thenReturn(Optional.of(new Installation()));
         when(projectRepository.findByFullName(anyString())).thenReturn(Optional.of(new Project()));

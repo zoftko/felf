@@ -39,6 +39,7 @@ class RepositoryControllerTests extends BaseControllerTest {
     static final String owner = "zoftko";
     static final String repo = "zynth53";
     static final String fullName = owner + "/" + repo;
+    static final String defaultBranch = "main";
 
     final String getTestUrl = "/" + fullName;
     final String tokenTestUrl = getTestUrl + "/token";
@@ -55,7 +56,7 @@ class RepositoryControllerTests extends BaseControllerTest {
         installation.setSender(senderId);
 
         project = new Project();
-        project.setDefaultBranch("main");
+        project.setDefaultBranch(defaultBranch);
 
         repoInstall = new RepositoryInstallation(installId, Map.of("pull_request", "write"), null);
         repository = new Repository(fullName, false, "main");
@@ -172,6 +173,31 @@ class RepositoryControllerTests extends BaseControllerTest {
         assertThat(storedProject).isNotNull();
         assertThat(storedProject.getToken()).isNotNull();
         assertThat(storedProject.getFullName()).isEqualTo(fullName);
+        assertThat(storedProject.getDefaultBranch()).isEqualTo(defaultBranch);
         assertThat(storedProject.getInstallation()).isEqualTo(installation);
+    }
+
+    @Test
+    void createRepositoryTokenPrivateRepo() throws Exception {
+        var privateRepository = new Repository(fullName, true, defaultBranch);
+        when(felfService.getFreshProjectData(owner, repo))
+            .thenReturn(
+                new ProjectData(
+                    fullName,
+                    Optional.empty(),
+                    Optional.of(installation),
+                    repoInstall,
+                    privateRepository
+                )
+            );
+
+        assertThat(
+            mockMvc
+                .perform(post(tokenTestUrl).with(githubLogin(senderId)).with(csrf()))
+                .andReturn()
+                .getResponse()
+                .getStatus()
+        )
+            .isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 }

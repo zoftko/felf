@@ -61,6 +61,10 @@ public class RepositoryController {
         model.addAttribute("isOwner", projectData.isOwner(Integer.parseInt(principal.getName())));
         model.addAttribute("hasPermissions", projectData.hasPermissions());
         model.addAttribute("fullName", projectData.fullName());
+        model.addAttribute(
+            "isPrivate",
+            projectData.repository() != null && projectData.repository().isPrivate()
+        );
 
         projectData
             .project()
@@ -103,6 +107,9 @@ public class RepositoryController {
         var projectData = felfService.getFreshProjectData(owner, repo);
         if (!projectData.isOwner(Integer.parseInt(principal.getName()))) {
             throw new ResponseStatusException(HttpStatus.UNAVAILABLE_FOR_LEGAL_REASONS);
+        }
+        if (projectData.repository() == null || projectData.repository().isPrivate()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         var project = projectData.project().orElse(projectData.initializeProject());

@@ -12,6 +12,7 @@ import com.zoftko.felf.entities.Installation;
 import com.zoftko.felf.entities.Project;
 import com.zoftko.felf.entities.Size;
 import com.zoftko.felf.models.ProjectData;
+import com.zoftko.felf.models.Repository;
 import com.zoftko.felf.models.RepositoryInstallation;
 import com.zoftko.felf.services.FelfService;
 import java.util.Map;
@@ -45,6 +46,7 @@ class RepositoryControllerTests extends BaseControllerTest {
     static Project project;
     static Installation installation;
     static RepositoryInstallation repoInstall;
+    static Repository repository;
 
     @BeforeAll
     static void setupAll() {
@@ -56,12 +58,15 @@ class RepositoryControllerTests extends BaseControllerTest {
         project.setDefaultBranch("main");
 
         repoInstall = new RepositoryInstallation(installId, Map.of("pull_request", "write"), null);
+        repository = new Repository(fullName, false, "main");
     }
 
     @Test
     void noProjectNoRepo() throws Exception {
         when(felfService.getProjectData(owner, repo))
-            .thenReturn(new ProjectData(fullName, Optional.empty(), Optional.of(new Installation()), null));
+            .thenReturn(
+                new ProjectData(fullName, Optional.empty(), Optional.of(new Installation()), null, null)
+            );
 
         assertThat(
             mockMvc.perform(get(getTestUrl).with(githubLogin(123))).andReturn().getModelAndView().getModel()
@@ -75,7 +80,13 @@ class RepositoryControllerTests extends BaseControllerTest {
     void projectNoAnalysis() throws Exception {
         when(felfService.getProjectData(owner, repo))
             .thenReturn(
-                new ProjectData(fullName, Optional.of(project), Optional.of(installation), repoInstall)
+                new ProjectData(
+                    fullName,
+                    Optional.of(project),
+                    Optional.of(installation),
+                    repoInstall,
+                    repository
+                )
             );
         when(analysisRepository.getLastAnalysisByRef(project, "main")).thenReturn(Optional.empty());
 
@@ -101,7 +112,13 @@ class RepositoryControllerTests extends BaseControllerTest {
     void projectWithAnalysis() throws Exception {
         when(felfService.getProjectData(owner, repo))
             .thenReturn(
-                new ProjectData(fullName, Optional.of(project), Optional.of(installation), repoInstall)
+                new ProjectData(
+                    fullName,
+                    Optional.of(project),
+                    Optional.of(installation),
+                    repoInstall,
+                    repository
+                )
             );
 
         var analysis = new Analysis();
@@ -120,7 +137,15 @@ class RepositoryControllerTests extends BaseControllerTest {
     @Test
     void createRepositoryTokenNoProject() throws Exception {
         when(felfService.getFreshProjectData(owner, repo))
-            .thenReturn(new ProjectData(fullName, Optional.empty(), Optional.of(installation), repoInstall));
+            .thenReturn(
+                new ProjectData(
+                    fullName,
+                    Optional.empty(),
+                    Optional.of(installation),
+                    repoInstall,
+                    repository
+                )
+            );
 
         assertThat(
             mockMvc

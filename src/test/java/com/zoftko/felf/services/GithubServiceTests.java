@@ -18,7 +18,7 @@ class GithubServiceTests {
     @BeforeEach
     void setUp() {
         client = WebClient.builder().baseUrl(server.url("/").toString()).build();
-        service = new GithubService(client);
+        service = new GithubService(client, client);
     }
 
     @Test
@@ -29,6 +29,17 @@ class GithubServiceTests {
         var request = server.takeRequest();
         assertThat(request.getRequestUrl().encodedPath())
             .isEqualTo("/repos/crazybolillo/dotconfig/installation");
+        assertThat(request.getMethod()).isEqualToIgnoringCase("GET");
+    }
+
+    @Test
+    void getRepository() throws InterruptedException {
+        server.enqueue(new MockResponse());
+        service.getRepository(12345, "zoftko", "felf").block();
+
+        var request = server.takeRequest();
+        assertThat(request.getRequestUrl().encodedPath()).isEqualTo("/repos/zoftko/felf");
+        assertThat(request.getHeader(GithubService.HTTP_HEADER_GH_UID)).isEqualTo("12345");
         assertThat(request.getMethod()).isEqualToIgnoringCase("GET");
     }
 }

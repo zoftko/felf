@@ -7,6 +7,7 @@ import java.security.SecureRandom;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -98,6 +99,7 @@ public class RepositoryController {
         return "pages/repository/index";
     }
 
+    @PreAuthorize("hasAuthority('OAUTH2_USER')")
     @PostMapping("{owner}/{repo}/token")
     public String createRepositoryToken(
         Principal principal,

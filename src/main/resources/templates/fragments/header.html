@@ -29,6 +29,9 @@
           </ul>
         </div>
       </div>
+      <div class="flex-none" sec:authorize="!isAuthenticated()">
+        <a th:href="@{/login}" class="btn btn-ghost">Login</a>
+      </div>
     </div>
   </nav>
 </header>

@@ -58,7 +58,10 @@ public class RepositoryController {
 
         var projectData = felfService.getProjectData(owner, repo);
         model.addAttribute("projectPresent", projectData.project().isPresent());
-        model.addAttribute("isOwner", projectData.isOwner(Integer.parseInt(principal.getName())));
+        model.addAttribute(
+            "isOwner",
+            principal != null && projectData.isOwner(Integer.parseInt(principal.getName()))
+        );
         model.addAttribute("hasPermissions", projectData.hasPermissions());
         model.addAttribute("fullName", projectData.fullName());
         model.addAttribute(

@@ -7,6 +7,10 @@ import com.zoftko.felf.controllers.AnalysisController;
 import com.zoftko.felf.controllers.WebhookController;
 import com.zoftko.felf.security.WebhookAuthenticationToken;
 import com.zoftko.felf.security.WebhookSecretFilter;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.security.SecureRandom;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -16,19 +20,54 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
+import org.springframework.security.web.authentication.logout.SimpleUrlLogoutSuccessHandler;
 import org.springframework.security.web.context.SecurityContextHolderFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
 
+    public static final String SESSION_REDIRECT_ATTR = "RedirectOnLogin";
     public static final String AUTHORITY_OAUTH2_USER = "OAUTH2_USER";
 
     @Value("${felf.github.app.webhook.secret}")
     private String ghWebhookSecret;
+
+    public static class RedirectLoginSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler {
+
+        public RedirectLoginSuccessHandler(String defaultURL) {
+            setDefaultTargetUrl(defaultURL);
+        }
+
+        @Override
+        public void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+        ) throws ServletException, IOException {
+            String redirectURL = (String) request.getSession().getAttribute(SESSION_REDIRECT_ATTR);
+            if (redirectURL != null && !redirectURL.isEmpty()) {
+                request.getSession().removeAttribute(SESSION_REDIRECT_ATTR);
+                getRedirectStrategy().sendRedirect(request, response, redirectURL);
+            } else {
+                super.onAuthenticationSuccess(request, response, authentication);
+            }
+        }
+    }
+
+    public LogoutSuccessHandler logoutHandler() {
+        var handler = new SimpleUrlLogoutSuccessHandler();
+        handler.setDefaultTargetUrl("/");
+        handler.setUseReferer(true);
+
+        return handler;
+    }
 
     @Bean
     @Order(2)
@@ -62,16 +101,12 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .authorizeHttpRequests(authorize ->
-                authorize
-                    .requestMatchers(LOGIN_MAPPING, "/static/**")
-                    .permitAll()
-                    .anyRequest()
-                    .hasAuthority(AUTHORITY_OAUTH2_USER)
-            )
+            .authorizeHttpRequests(authorize -> authorize.anyRequest().permitAll())
             .csrf(withDefaults())
-            .oauth2Login(oauth2 -> oauth2.loginPage(LOGIN_MAPPING).defaultSuccessUrl("/"))
-            .logout(logout -> logout.logoutSuccessUrl(LOGIN_MAPPING));
+            .oauth2Login(oauth2 ->
+                oauth2.loginPage(LOGIN_MAPPING).successHandler(new RedirectLoginSuccessHandler("/"))
+            )
+            .logout(logout -> logout.logoutSuccessHandler(logoutHandler()));
 
         return http.build();
     }

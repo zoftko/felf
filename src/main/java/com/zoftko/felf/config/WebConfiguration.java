@@ -11,8 +11,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Bean
-    @Qualifier("gh")
+    @Bean(name = "gh")
     public WebClient.Builder defaultGithubBuilder() {
         return WebClient
             .builder()
@@ -21,8 +20,7 @@ public class WebConfiguration implements WebMvcConfigurer {
             .defaultHeader("Accept", "application/vnd.github+json");
     }
 
-    @Bean
-    @Qualifier(GithubService.QUALIFIER_APP_TOKEN)
+    @Bean(name = GithubService.QUALIFIER_APP_TOKEN)
     WebClient githubAppClient(
         @Qualifier("gh") WebClient.Builder defaultGithubBuilder,
         @Qualifier(GithubService.QUALIFIER_APP_TOKEN) ExchangeFilterFunction exchangeFilterFunction
@@ -30,8 +28,7 @@ public class WebConfiguration implements WebMvcConfigurer {
         return defaultGithubBuilder.clone().filter(exchangeFilterFunction).build();
     }
 
-    @Bean
-    @Qualifier(GithubService.QUALIFIER_INSTALL_TOKEN)
+    @Bean(name = GithubService.QUALIFIER_INSTALL_TOKEN)
     WebClient githubInstallClient(
         @Qualifier("gh") WebClient.Builder defaultGithubBuilder,
         @Qualifier(GithubService.QUALIFIER_INSTALL_TOKEN) ExchangeFilterFunction exchangeFilterFunction

@@ -12,8 +12,8 @@ import reactor.core.publisher.Mono;
 public class GithubService {
 
     public static final String HTTP_HEADER_GH_UID = "X-Github-Uid";
-    public static final String QUALIFIER_INSTALL_TOKEN = "gh-install";
-    public static final String QUALIFIER_APP_TOKEN = "gh-app";
+    public static final String QUALIFIER_INSTALL_TOKEN = "githubInstall";
+    public static final String QUALIFIER_APP_TOKEN = "githubApp";
 
     private final WebClient appClient;
     private final WebClient installClient;

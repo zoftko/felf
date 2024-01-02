@@ -1,6 +1,7 @@
 package com.zoftko.felf.filters;
 
 import com.zoftko.felf.services.AppTokenService;
+import com.zoftko.felf.services.GithubService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
@@ -13,7 +14,7 @@ import org.springframework.web.reactive.function.client.ExchangeFunction;
 import reactor.core.publisher.Mono;
 
 @Component
-@Qualifier("gh-app")
+@Qualifier(GithubService.QUALIFIER_APP_TOKEN)
 public class AppTokenFilter implements ExchangeFilterFunction {
 
     private final AppTokenService tokenService;

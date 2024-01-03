@@ -14,8 +14,10 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 @Service
-@CacheConfig(cacheNames = "felf-service")
+@CacheConfig(cacheNames = FelfService.CACHE_NAME)
 public class FelfService {
+
+    public static final String CACHE_NAME = "felf-service";
 
     private final InstallationRepository installationRepository;
     private final ProjectRepository projectRepository;

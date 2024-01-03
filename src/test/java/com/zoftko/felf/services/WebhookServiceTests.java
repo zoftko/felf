@@ -2,7 +2,7 @@ package com.zoftko.felf.services;
 
 import static com.zoftko.felf.services.WebhookService.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.in;
+import static org.mockito.Mockito.*;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -20,8 +20,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.system.CapturedOutput;
 import org.springframework.boot.test.system.OutputCaptureExtension;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 
 @DataJpaTest
 @ExtendWith(OutputCaptureExtension.class)
@@ -37,12 +40,15 @@ class WebhookServiceTests {
     @Autowired
     ProjectRepository projectRepository;
 
+    @MockBean
+    CacheManager cacheManager;
+
     WebhookService webhookService;
     ObjectMapper objectMapper = new ObjectMapper();
 
     @BeforeEach
     void setUp() {
-        webhookService = new WebhookService(installationRepository, projectRepository);
+        webhookService = new WebhookService(installationRepository, projectRepository, cacheManager);
     }
 
     JsonNode createInstallationJsonNode(
@@ -235,5 +241,39 @@ class WebhookServiceTests {
 
         manager.clear();
         assertThat(projectRepository.findById(project.getId()).get().getPrivate()).isFalse();
+    }
+
+    @Test
+    void processInstallationRepositoriesAdded() throws JsonProcessingException {
+        var cache = mock(Cache.class);
+        String projectOne = "zoftko/felf";
+        String projectTwo = "zoftko/felf-cli";
+
+        when(cacheManager.getCache(FelfService.CACHE_NAME)).thenReturn(cache);
+        webhookService.processEvent(
+            EVENT_INSTALLATION_REPOS,
+            objectMapper.readTree(
+                String.format(
+                    """
+                    {
+                        "action": "added",
+                        "repositories_added": [
+                            {
+                              "full_name": "%s"
+                            },
+                            {
+                              "full_name": "%s"
+                            }
+                        ]
+                    }
+                    """,
+                    projectOne,
+                    projectTwo
+                )
+            )
+        );
+
+        verify(cache, times(1)).evictIfPresent(projectOne);
+        verify(cache, times(1)).evictIfPresent(projectTwo);
     }
 }

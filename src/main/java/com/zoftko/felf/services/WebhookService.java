@@ -7,12 +7,16 @@ import com.zoftko.felf.entities.Installation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.CacheManager;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WebhookService {
 
+    public static final String ACTION_KEY = "action";
+
+    public static final String EVENT_INSTALLATION_REPOS = "installation_repositories";
     public static final String EVENT_INSTALLATION = "installation";
     public static final String EVENT_REPOSITORY = "repository";
 
@@ -24,16 +28,19 @@ public class WebhookService {
 
     private final InstallationRepository installationRepository;
     private final ProjectRepository projectRepository;
+    private final CacheManager cacheManager;
 
     private final Logger log = LoggerFactory.getLogger(WebhookService.class);
 
     @Autowired
     public WebhookService(
         InstallationRepository installationRepository,
-        ProjectRepository projectRepository
+        ProjectRepository projectRepository,
+        CacheManager cacheManager
     ) {
         this.installationRepository = installationRepository;
         this.projectRepository = projectRepository;
+        this.cacheManager = cacheManager;
     }
 
     private Installation jsonToInstallation(JsonNode json) {
@@ -50,7 +57,7 @@ public class WebhookService {
     }
 
     private void processInstallationEvent(JsonNode payload) {
-        String action = payload.path("action").asText("none");
+        String action = payload.path(ACTION_KEY).asText("none");
         switch (action) {
             case ACTION_DELETED -> installationRepository.deleteById(
                 payload.path(EVENT_INSTALLATION).path("id").asInt(-1)
@@ -67,7 +74,7 @@ public class WebhookService {
     }
 
     private void processRepositoryEvent(JsonNode payload) {
-        String action = payload.path("action").asText("none");
+        String action = payload.path(ACTION_KEY).asText("none");
         String fullName = payload.path(EVENT_REPOSITORY).path("full_name").asText();
 
         log.info("processing repository action '{}'", action);
@@ -82,12 +89,23 @@ public class WebhookService {
         }
     }
 
+    private void processInstallationReposEvent(JsonNode payload) {
+        String action = payload.path(ACTION_KEY).asText("none");
+        log.info("processing {}.{}", EVENT_INSTALLATION_REPOS, action);
+
+        var repos = payload.get(String.format("repositories_%s", action));
+        var cache = cacheManager.getCache(FelfService.CACHE_NAME);
+        if (repos != null && cache != null) {
+            repos.forEach(node -> cache.evictIfPresent(node.path("full_name").asText("")));
+        }
+    }
+
     @Async
     public void processEvent(String event, JsonNode payload) {
-        log.info("processing {} event", event);
         switch (event) {
             case EVENT_INSTALLATION -> processInstallationEvent(payload);
             case EVENT_REPOSITORY -> processRepositoryEvent(payload);
+            case EVENT_INSTALLATION_REPOS -> processInstallationReposEvent(payload);
             default -> log.info("{} is not supported", event);
         }
     }

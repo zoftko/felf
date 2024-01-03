@@ -67,7 +67,7 @@ jobs:
           echo 'spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver' >> config/application.properties
           echo "spring.security.oauth2.client.registration.github.client-id=dummy" >> config/application.properties
           echo "spring.security.oauth2.client.registration.github.client-secret=dummy" >> config/application.properties
-          echo "felf.github.app.pem=$(readlink -m config/felf.pem)" >> config/application.properties
+          echo "felf.github.app.pem=$(base64 config/felf.pem | xargs | sed 's/ //g')" >> config/application.properties
           echo "felf.github.app.id=$((RANDOM + 100000))" >> config/application.properties
           echo "felf.github.app.webhook.secret=watup" >> config/application.properties
           cat config/application.properties

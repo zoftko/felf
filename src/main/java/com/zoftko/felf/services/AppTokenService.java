@@ -2,15 +2,16 @@ package com.zoftko.felf.services;
 
 import io.jsonwebtoken.Jwts;
 import jakarta.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileReader;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.security.Key;
 import java.security.KeyFactory;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.PKCS8EncodedKeySpec;
 import java.time.Instant;
+import java.util.Base64;
 import org.bouncycastle.util.io.pem.PemReader;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CacheConfig;
@@ -24,7 +25,7 @@ import reactor.core.publisher.Mono;
 public class AppTokenService implements TokenService<String> {
 
     @Value("${felf.github.app.pem}")
-    private File githubPem;
+    private String githubPem;
 
     @Value("${felf.github.app.id}")
     private String githubAppId;
@@ -45,7 +46,11 @@ public class AppTokenService implements TokenService<String> {
     @PostConstruct
     public void init() throws IOException, NoSuchAlgorithmException, InvalidKeySpecException {
         java.security.Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
-        try (var pemReader = new PemReader(new FileReader(githubPem))) {
+        try (
+            var pemReader = new PemReader(
+                new InputStreamReader(new ByteArrayInputStream(Base64.getDecoder().decode(githubPem)))
+            )
+        ) {
             PKCS8EncodedKeySpec keySpec = new PKCS8EncodedKeySpec(pemReader.readPemObject().getContent());
             githubKey = KeyFactory.getInstance("RSA").generatePrivate(keySpec);
         }

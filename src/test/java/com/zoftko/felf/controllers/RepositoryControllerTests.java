@@ -58,7 +58,7 @@ class RepositoryControllerTests extends BaseControllerTest {
         project = new Project();
         project.setDefaultBranch(defaultBranch);
 
-        repoInstall = new RepositoryInstallation(installId, Map.of("pull_request", "write"), null);
+        repoInstall = new RepositoryInstallation(installId, Map.of("pull_requests", "write"), null);
         repository = new Repository(fullName, false, "main");
     }
 

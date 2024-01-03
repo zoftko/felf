@@ -27,7 +27,7 @@ public record ProjectData(
         }
 
         return (
-            repoInstall.permissions().getOrDefault("pull_request", "").equals("write") &&
+            repoInstall.permissions().getOrDefault("pull_requests", "").equals("write") &&
             repoInstall.suspendedAt() == null
         );
     }

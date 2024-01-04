@@ -19,7 +19,9 @@
           </p>
           <p class="text-xl md:text-2xl mt-4">
             If you are the owner of this repository
-            <a class="underline" href="https://github.com/apps/elf-watch/installations/new"
+            <a
+              class="underline"
+              th:href="@{https://github.com/apps/{slug}/installations/new(slug = ${appSlug})}"
               >install ELF Watch</a
             >
             to get started.

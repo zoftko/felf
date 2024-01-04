@@ -5,6 +5,8 @@ import com.zoftko.felf.services.FelfService;
 import java.security.Principal;
 import java.security.SecureRandom;
 import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,6 +26,8 @@ public class RepositoryController {
     private final AnalysisRepository analysisRepository;
     private final SecureRandom secureRandom;
     private final PasswordEncoder encoder;
+
+    private final Logger log = LoggerFactory.getLogger(RepositoryController.class);
 
     @Autowired
     public RepositoryController(
@@ -120,6 +124,8 @@ public class RepositoryController {
         var project = projectData.project().orElse(projectData.initializeProject());
         var token = project.generateToken(secureRandom, encoder);
         model.addAttribute("token", token);
+
+        log.info("user {} generated token for {}", principal.getName(), project.getFullName());
         felfService.storeProject(project);
 
         return "pages/repository/token";

@@ -148,7 +148,7 @@ class WebhookServiceTests {
             )
         );
 
-        assertThat(output.getOut()).contains("invalid payload for installation action");
+        assertThat(output.getOut()).contains("invalid payload for installation.created");
         assertThat(installationRepository.findById(installationId)).isNotPresent();
     }
 
@@ -159,7 +159,7 @@ class WebhookServiceTests {
             objectMapper.readTree(new JSONObject().put("action", "bazinga").toString())
         );
 
-        assertThat(output.getOut()).contains("unknown installation action");
+        assertThat(output.getOut()).contains("installation.bazinga is not supported");
     }
 
     @Test

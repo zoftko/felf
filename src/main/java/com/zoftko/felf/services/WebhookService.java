@@ -26,6 +26,8 @@ public class WebhookService {
     public static final String ACTION_PRIVATIZED = "privatized";
     public static final String ACTION_PUBLICIZED = "publicized";
 
+    public static final String PROCESS_TMPL = "processing {}.{}";
+
     private final InstallationRepository installationRepository;
     private final ProjectRepository projectRepository;
     private final CacheManager cacheManager;
@@ -58,6 +60,8 @@ public class WebhookService {
 
     private void processInstallationEvent(JsonNode payload) {
         String action = payload.path(ACTION_KEY).asText("none");
+        log.info(PROCESS_TMPL, EVENT_INSTALLATION, action);
+
         switch (action) {
             case ACTION_DELETED -> installationRepository.deleteById(
                 payload.path(EVENT_INSTALLATION).path("id").asInt(-1)
@@ -66,10 +70,10 @@ public class WebhookService {
                 try {
                     installationRepository.save(jsonToInstallation(payload));
                 } catch (NullPointerException exception) {
-                    log.error("invalid payload for installation action '{}' received", action);
+                    log.error("invalid payload for {}.{}", EVENT_INSTALLATION, action);
                 }
             }
-            default -> log.info("unknown installation action '{}' provided", action);
+            default -> log.info("{}.{} is not supported", EVENT_INSTALLATION, action);
         }
     }
 
@@ -77,7 +81,7 @@ public class WebhookService {
         String action = payload.path(ACTION_KEY).asText("none");
         String fullName = payload.path(EVENT_REPOSITORY).path("full_name").asText();
 
-        log.info("processing repository action '{}'", action);
+        log.info(PROCESS_TMPL, EVENT_REPOSITORY, action);
         switch (action) {
             case ACTION_EDITED -> {
                 String defaultBranch = payload.path(EVENT_REPOSITORY).path("default_branch").asText("");
@@ -85,13 +89,13 @@ public class WebhookService {
             }
             case ACTION_PRIVATIZED -> projectRepository.updateIsPrivateByFullName(fullName, true);
             case ACTION_PUBLICIZED -> projectRepository.updateIsPrivateByFullName(fullName, false);
-            default -> log.info("repository action {} is not supported", action);
+            default -> log.info("{}.{} is not supported", EVENT_REPOSITORY, action);
         }
     }
 
     private void processInstallationReposEvent(JsonNode payload) {
         String action = payload.path(ACTION_KEY).asText("none");
-        log.info("processing {}.{}", EVENT_INSTALLATION_REPOS, action);
+        log.info(PROCESS_TMPL, EVENT_INSTALLATION_REPOS, action);
 
         var repos = payload.get(String.format("repositories_%s", action));
         var cache = cacheManager.getCache(FelfService.CACHE_NAME);
@@ -106,7 +110,7 @@ public class WebhookService {
             case EVENT_INSTALLATION -> processInstallationEvent(payload);
             case EVENT_REPOSITORY -> processRepositoryEvent(payload);
             case EVENT_INSTALLATION_REPOS -> processInstallationReposEvent(payload);
-            default -> log.info("{} is not supported", event);
+            default -> log.info("event {} is not supported", event);
         }
     }
 }

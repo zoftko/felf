@@ -1,6 +1,8 @@
 package com.zoftko.felf.services;
 
 import com.zoftko.felf.models.GhInstallToken;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.annotation.CacheConfig;
@@ -16,6 +18,8 @@ public class InstallTokenService {
 
     private final WebClient webClient;
 
+    private final Logger log = LoggerFactory.getLogger(InstallTokenService.class);
+
     @Autowired
     public InstallTokenService(@Qualifier(GithubService.QUALIFIER_APP_TOKEN) WebClient webClient) {
         this.webClient = webClient;
@@ -28,6 +32,10 @@ public class InstallTokenService {
             )
             .retrieve()
             .bodyToMono(GhInstallToken.class)
+            .onErrorResume(error -> {
+                log.error(error.getMessage());
+                return Mono.empty();
+            })
             .flatMap(token -> Mono.just(token.token()))
             .cache();
     }

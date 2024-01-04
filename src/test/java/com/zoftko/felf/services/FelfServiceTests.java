@@ -14,12 +14,16 @@ import com.zoftko.felf.models.RepositoryInstallation;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.system.CapturedOutput;
+import org.springframework.boot.test.system.OutputCaptureExtension;
 import reactor.core.publisher.Mono;
 
+@ExtendWith(OutputCaptureExtension.class)
 @SpringBootTest(classes = { FelfService.class, CacheConfiguration.class, CacheAutoConfiguration.class })
 class FelfServiceTests {
 
@@ -69,5 +73,16 @@ class FelfServiceTests {
         felfService.storeProject(project);
         felfService.getProjectData(owner, repo);
         verify(projectRepository, times(3)).findByFullName(name);
+    }
+
+    @Test
+    void getRepositoryInstallationWithError(CapturedOutput output) {
+        when(githubService.getRepositoryInstallation(anyString(), anyString()))
+            .thenReturn(Mono.error(new Exception("kaboom")));
+
+        var projectData = felfService.getProjectData("zoftko", "felf");
+
+        assertThat(projectData.repoInstall()).isNull();
+        assertThat(output.getOut()).contains("kaboom");
     }
 }

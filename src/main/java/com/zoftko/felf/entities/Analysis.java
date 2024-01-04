@@ -1,7 +1,10 @@
 package com.zoftko.felf.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 
 @Entity
@@ -19,7 +22,9 @@ public class Analysis {
     @NotBlank
     private String ref;
 
-    @NotBlank
+    @Min(40)
+    @Max(40)
+    @Pattern(regexp = "^[0-9A-Za-z]{40}$")
     @Column(columnDefinition = "char(40)")
     private String sha;
 

@@ -3,7 +3,10 @@ package com.zoftko.felf.controllers;
 import com.zoftko.felf.dao.AnalysisRepository;
 import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Analysis;
+import com.zoftko.felf.services.FelfService;
 import java.time.LocalDateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,6 +27,8 @@ public class AnalysisController {
     private final AnalysisRepository analysisRepository;
 
     private final PasswordEncoder encoder;
+
+    private final Logger log = LoggerFactory.getLogger(AnalysisController.class);
 
     @Autowired
     public AnalysisController(
@@ -60,6 +65,15 @@ public class AnalysisController {
         if (analysis.getRef().endsWith("/merge")) {
             var existing = analysisRepository.findByProjectAndRef(analysis.getProject(), analysis.getRef());
             existing.ifPresent(value -> analysis.setId(value.getId()));
+        }
+
+        if (log.isInfoEnabled()) {
+            // Should not need replaceAll but better safe than sorry...
+            log.info(
+                "saving analysis project={} sha={}",
+                project.get().getFullName(),
+                analysis.getSha().replaceAll("[\n\r]", "")
+            );
         }
         analysisRepository.save(analysis);
 

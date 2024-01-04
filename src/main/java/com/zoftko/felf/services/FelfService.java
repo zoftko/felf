@@ -5,6 +5,8 @@ import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Project;
 import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.Repository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
@@ -23,6 +25,8 @@ public class FelfService {
     private final ProjectRepository projectRepository;
     private final GithubService githubService;
 
+    private final Logger log = LoggerFactory.getLogger(FelfService.class);
+
     @Autowired
     public FelfService(
         InstallationRepository installationRepository,
@@ -40,7 +44,10 @@ public class FelfService {
         var installation = installationRepository.findByAccountLogin(owner);
         var repoInstall = githubService
             .getRepositoryInstallation(owner, repo)
-            .onErrorResume(__ -> Mono.empty())
+            .onErrorResume(error -> {
+                log.error(error.getMessage());
+                return Mono.empty();
+            })
             .block();
 
         Repository repository = null;
@@ -48,7 +55,10 @@ public class FelfService {
             repository =
                 githubService
                     .getRepository(repoInstall.id(), owner, repo)
-                    .onErrorResume(__ -> Mono.empty())
+                    .onErrorResume(error -> {
+                        log.error(error.getMessage());
+                        return Mono.empty();
+                    })
                     .block();
         }
 

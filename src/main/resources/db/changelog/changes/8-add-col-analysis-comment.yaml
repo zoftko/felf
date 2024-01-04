@@ -1,0 +1,17 @@
+databaseChangeLog:
+  - changeSet:
+      id: 8-add-col-analysis-comment
+      author: anton
+      changes:
+        - addColumn:
+            tableName: analysis
+            columns:
+              - column:
+                  name: comment
+                  type: char(4)
+                  defaultValue: noop
+                  constraints:
+                    nullable: false
+              - column:
+                  name: comment_id
+                  type: bigint

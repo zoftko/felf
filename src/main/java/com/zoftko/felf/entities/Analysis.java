@@ -10,6 +10,16 @@ import java.time.LocalDateTime;
 @Entity
 public class Analysis {
 
+    public enum CommentStatus {
+        NOOP,
+        TODO,
+        FAIL,
+    }
+
+    public Analysis() {
+        comment = CommentStatus.NOOP;
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -30,6 +40,12 @@ public class Analysis {
 
     @Embedded
     private Size size;
+
+    @Enumerated(EnumType.STRING)
+    @Column(columnDefinition = "char(4)")
+    private CommentStatus comment;
+
+    private Long commentId;
 
     public Long getId() {
         return id;
@@ -77,5 +93,21 @@ public class Analysis {
 
     public void setSize(Size size) {
         this.size = size;
+    }
+
+    public CommentStatus getComment() {
+        return comment;
+    }
+
+    public void setComment(CommentStatus comment) {
+        this.comment = comment;
+    }
+
+    public Long getCommentId() {
+        return commentId;
+    }
+
+    public void setCommentId(Long commentId) {
+        this.commentId = commentId;
     }
 }

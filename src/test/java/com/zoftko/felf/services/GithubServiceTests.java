@@ -42,4 +42,26 @@ class GithubServiceTests {
         assertThat(request.getHeader(GithubService.HTTP_HEADER_GH_UID)).isEqualTo("12345");
         assertThat(request.getMethod()).isEqualToIgnoringCase("GET");
     }
+
+    @Test
+    void createIssueComment() throws InterruptedException {
+        server.enqueue(new MockResponse());
+        service.createIssueComment(123, "57", "zoftko", "felf", "kiwiblue").block();
+
+        var request = server.takeRequest();
+        assertThat(request.getRequestUrl().encodedPath()).isEqualTo("/repos/zoftko/felf/issues/57/comments");
+        assertThat(request.getHeader(GithubService.HTTP_HEADER_GH_UID)).isEqualTo("123");
+        assertThat(request.getMethod()).isEqualToIgnoringCase("POST");
+    }
+
+    @Test
+    void deleteIssueComment() throws InterruptedException {
+        server.enqueue(new MockResponse());
+        service.deleteIssueComment(532, "kiwi", "blue", 12312L).block();
+
+        var request = server.takeRequest();
+        assertThat(request.getRequestUrl().encodedPath()).isEqualTo("/repos/kiwi/blue/issues/comments/12312");
+        assertThat(request.getHeader(GithubService.HTTP_HEADER_GH_UID)).isEqualTo("532");
+        assertThat(request.getMethod()).isEqualToIgnoringCase("DELETE");
+    }
 }

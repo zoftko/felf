@@ -1,14 +1,17 @@
 package com.zoftko.felf.entities;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Entity
 public class Analysis {
+
+    private static final java.util.regex.Pattern issueIdPattern = java.util.regex.Pattern.compile(
+        "^(\\d{1,6})/merge$"
+    );
 
     public enum CommentStatus {
         NOOP,
@@ -32,8 +35,6 @@ public class Analysis {
     @NotBlank
     private String ref;
 
-    @Min(40)
-    @Max(40)
     @Pattern(regexp = "^[0-9A-Za-z]{40}$")
     @Column(columnDefinition = "char(40)")
     private String sha;
@@ -109,5 +110,14 @@ public class Analysis {
 
     public void setCommentId(Long commentId) {
         this.commentId = commentId;
+    }
+
+    public Optional<String> getIssueId() {
+        var matcher = issueIdPattern.matcher(ref);
+        if (matcher.find()) {
+            return Optional.of(matcher.group(1));
+        }
+
+        return Optional.empty();
     }
 }

@@ -47,4 +47,9 @@ public class Size {
         }
         this.bss = bss;
     }
+
+    public static String percentDiff(Long initialSize, Long finalSize) {
+        double diff = ((double) (finalSize - initialSize) / initialSize) * 100;
+        return String.format("%+.2f%%", diff);
+    }
 }

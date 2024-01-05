@@ -3,7 +3,6 @@ package com.zoftko.felf.controllers;
 import com.zoftko.felf.dao.AnalysisRepository;
 import com.zoftko.felf.dao.ProjectRepository;
 import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.services.FelfService;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,8 +62,13 @@ public class AnalysisController {
         analysis.setCreatedAt(LocalDateTime.now());
 
         if (analysis.getRef().endsWith("/merge")) {
-            var existing = analysisRepository.findByProjectAndRef(analysis.getProject(), analysis.getRef());
-            existing.ifPresent(value -> analysis.setId(value.getId()));
+            analysis.setComment(Analysis.CommentStatus.TODO);
+            analysisRepository
+                .findByProjectAndRef(analysis.getProject(), analysis.getRef())
+                .ifPresent(value -> {
+                    analysis.setId(value.getId());
+                    analysis.setCommentId(value.getCommentId());
+                });
         }
 
         if (log.isInfoEnabled()) {

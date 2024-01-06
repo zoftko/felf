@@ -1,0 +1,14 @@
+# Files
+Dockerfile
+.gitignore
+LICENSE
+mvnw
+mvnw.cmd
+*.properties
+
+# Folders
+.github
+.idea
+.mvn
+node_modules
+target

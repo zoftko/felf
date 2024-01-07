@@ -2,7 +2,7 @@
   <nav class="bg-base-100 shadow-md">
     <div class="container navbar mx-auto">
       <div class="flex-1">
-        <a th:href="@{/}" class="btn btn-ghost normal-case text-xl">ELF Watch</a>
+        <a th:href="@{/}" class="btn btn-ghost normal-case text-xl" th:text="${appName}">felf</a>
       </div>
       <div class="flex-none" sec:authorize="isAuthenticated()">
         <div class="dropdown dropdown-end">

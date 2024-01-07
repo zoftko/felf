@@ -11,8 +11,16 @@ public class GlobalControllerAdvice {
     @Value("${felf.github.app.slug}")
     private String appSlug;
 
+    @Value("${felf.app.name}")
+    private String appName;
+
     @ModelAttribute("appSlug")
     public String appSlug() {
         return appSlug;
+    }
+
+    @ModelAttribute("appName")
+    public String appName() {
+        return appName;
     }
 }

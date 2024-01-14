@@ -89,7 +89,7 @@
             <tbody>
               <tr class="text-lg" th:each="measurement : ${measurements}">
                 <td th:text="${measurement.key}"></td>
-                <td th:text="${measurement.value}"></td>
+                <td th:text="${#numbers.formatDecimal(measurement.value, 0, 'COMMA', 0, 'POINT')}"></td>
               </tr>
             </tbody>
           </table>

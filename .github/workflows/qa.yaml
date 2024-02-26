@@ -59,6 +59,7 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Configuration
         run: |
+          cd felf
           mkdir config
           openssl genpkey -out config/felf.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
           echo 'spring.datasource.url=jdbc:mysql://localhost/spring' >> config/application.properties

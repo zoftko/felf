@@ -35,4 +35,4 @@ build/
 ### NPM ###
 *.min.js
 node_modules/
-src/main/resources/static/css/felf.css
+felf/src/main/resources/static/css/felf.css

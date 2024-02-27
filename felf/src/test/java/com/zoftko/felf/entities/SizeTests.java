@@ -1,4 +1,4 @@
-package com.zoftko.felf.entities;
+package com.zoftko.felf.db.entities;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

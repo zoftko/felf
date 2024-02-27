@@ -1,8 +1,8 @@
 package com.zoftko.felf.tasks;
 
-import com.zoftko.felf.dao.AnalysisRepository;
-import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.entities.Size;
+import com.zoftko.felf.db.dao.AnalysisRepository;
+import com.zoftko.felf.db.entities.Analysis;
+import com.zoftko.felf.db.entities.Size;
 import com.zoftko.felf.services.GithubService;
 import freemarker.template.Template;
 import java.io.IOException;

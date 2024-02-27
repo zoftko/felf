@@ -1,9 +1,9 @@
 package com.zoftko.felf.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.zoftko.felf.dao.InstallationRepository;
-import com.zoftko.felf.dao.ProjectRepository;
-import com.zoftko.felf.entities.Installation;
+import com.zoftko.felf.db.dao.InstallationRepository;
+import com.zoftko.felf.db.dao.ProjectRepository;
+import com.zoftko.felf.db.entities.Installation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,8 +1,8 @@
 package com.zoftko.felf.controllers;
 
-import com.zoftko.felf.dao.AnalysisRepository;
-import com.zoftko.felf.dao.ProjectRepository;
-import com.zoftko.felf.entities.Analysis;
+import com.zoftko.felf.db.dao.AnalysisRepository;
+import com.zoftko.felf.db.dao.ProjectRepository;
+import com.zoftko.felf.db.entities.Analysis;
 import java.time.LocalDateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

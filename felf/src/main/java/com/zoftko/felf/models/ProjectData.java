@@ -1,7 +1,7 @@
 package com.zoftko.felf.models;
 
-import com.zoftko.felf.entities.Installation;
-import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.db.entities.Installation;
+import com.zoftko.felf.db.entities.Project;
 import java.util.Optional;
 
 public record ProjectData(

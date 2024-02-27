@@ -1,6 +1,6 @@
 package com.zoftko.felf.controllers;
 
-import com.zoftko.felf.dao.AnalysisRepository;
+import com.zoftko.felf.db.dao.AnalysisRepository;
 import com.zoftko.felf.services.FelfService;
 import java.security.Principal;
 import java.security.SecureRandom;

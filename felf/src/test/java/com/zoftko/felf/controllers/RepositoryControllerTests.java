@@ -6,11 +6,11 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 
-import com.zoftko.felf.dao.AnalysisRepository;
-import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.entities.Installation;
-import com.zoftko.felf.entities.Project;
-import com.zoftko.felf.entities.Size;
+import com.zoftko.felf.db.dao.AnalysisRepository;
+import com.zoftko.felf.db.entities.Analysis;
+import com.zoftko.felf.db.entities.Installation;
+import com.zoftko.felf.db.entities.Project;
+import com.zoftko.felf.db.entities.Size;
 import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.Repository;
 import com.zoftko.felf.models.RepositoryInstallation;

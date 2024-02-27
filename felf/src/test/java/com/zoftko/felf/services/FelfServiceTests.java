@@ -5,10 +5,10 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 import com.zoftko.felf.config.CacheConfiguration;
-import com.zoftko.felf.dao.InstallationRepository;
-import com.zoftko.felf.dao.ProjectRepository;
-import com.zoftko.felf.entities.Installation;
-import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.db.dao.InstallationRepository;
+import com.zoftko.felf.db.dao.ProjectRepository;
+import com.zoftko.felf.db.entities.Installation;
+import com.zoftko.felf.db.entities.Project;
 import com.zoftko.felf.models.Repository;
 import com.zoftko.felf.models.RepositoryInstallation;
 import java.util.Map;

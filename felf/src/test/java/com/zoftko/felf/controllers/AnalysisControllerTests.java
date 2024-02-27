@@ -8,10 +8,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.zoftko.felf.dao.AnalysisRepository;
-import com.zoftko.felf.dao.ProjectRepository;
-import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.db.dao.AnalysisRepository;
+import com.zoftko.felf.db.dao.ProjectRepository;
+import com.zoftko.felf.db.entities.Analysis;
+import com.zoftko.felf.db.entities.Project;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Optional;

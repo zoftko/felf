@@ -1,4 +1,4 @@
-package com.zoftko.felf.entities;
+package com.zoftko.felf.db.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;

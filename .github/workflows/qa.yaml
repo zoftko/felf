@@ -59,21 +59,22 @@ jobs:
           restore-keys: ${{ runner.os }}-m2
       - name: Configuration
         run: |
-          cd felf
-          mkdir config
-          openssl genpkey -out config/felf.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
-          echo 'spring.datasource.url=jdbc:mysql://localhost/spring' >> config/application.properties
-          echo 'spring.datasource.username=spring' >> config/application.properties
-          echo 'spring.datasource.password=spring' >> config/application.properties
-          echo 'spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver' >> config/application.properties
-          echo "spring.security.oauth2.client.registration.github.client-id=dummy" >> config/application.properties
-          echo "spring.security.oauth2.client.registration.github.client-secret=dummy" >> config/application.properties
-          echo "felf.github.app.pem=$(base64 config/felf.pem | xargs | sed 's/ //g')" >> config/application.properties
-          echo "felf.github.app.id=$((RANDOM + 100000))" >> config/application.properties
-          echo "felf.github.app.webhook.secret=watup" >> config/application.properties
-          echo "felf.github.app.slug=felftest" >> config/application.properties
-          echo "felf.app.name=FelfTest" >> config/application.properties
-          cat config/application.properties
+          openssl genpkey -out felf.pem -algorithm RSA -pkeyopt rsa_keygen_bits:2048
+          echo 'spring.datasource.url=jdbc:mysql://localhost/spring' >> application.properties
+          echo 'spring.datasource.username=spring' >> application.properties
+          echo 'spring.datasource.password=spring' >> application.properties
+          echo 'spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver' >> application.properties
+          echo "spring.security.oauth2.client.registration.github.client-id=dummy" >> application.properties
+          echo "spring.security.oauth2.client.registration.github.client-secret=dummy" >> application.properties
+          echo "felf.github.app.pem=$(base64 felf.pem | xargs | sed 's/ //g')" >> application.properties
+          echo "felf.github.app.id=$((RANDOM + 100000))" >> application.properties
+          echo "felf.github.app.webhook.secret=watup" >> application.properties
+          echo "felf.github.app.slug=felftest" >> application.properties
+          echo "felf.app.name=FelfTest" >> application.properties
+          cat application.properties
+          mkdir -p felf/src/main/resources fakelf/src/main/resources
+          cp application.properties felf/src/main/resources
+          cp application.properties fakelf/src/main/resources
       - name: Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

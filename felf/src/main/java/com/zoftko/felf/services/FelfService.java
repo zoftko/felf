@@ -1,8 +1,8 @@
 package com.zoftko.felf.services;
 
-import com.zoftko.felf.dao.InstallationRepository;
-import com.zoftko.felf.dao.ProjectRepository;
-import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.db.dao.InstallationRepository;
+import com.zoftko.felf.db.dao.ProjectRepository;
+import com.zoftko.felf.db.entities.Project;
 import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.Repository;
 import org.slf4j.Logger;

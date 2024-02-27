@@ -4,11 +4,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
-import com.zoftko.felf.dao.AnalysisRepository;
-import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.entities.Installation;
-import com.zoftko.felf.entities.Project;
-import com.zoftko.felf.entities.Size;
+import com.zoftko.felf.db.dao.AnalysisRepository;
+import com.zoftko.felf.db.entities.Analysis;
+import com.zoftko.felf.db.entities.Installation;
+import com.zoftko.felf.db.entities.Project;
+import com.zoftko.felf.db.entities.Size;
 import com.zoftko.felf.models.CreateIssueComment;
 import com.zoftko.felf.services.GithubService;
 import java.io.IOException;

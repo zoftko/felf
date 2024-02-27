@@ -1,7 +1,7 @@
-package com.zoftko.felf.dao;
+package com.zoftko.felf.db.dao;
 
-import com.zoftko.felf.entities.Analysis;
-import com.zoftko.felf.entities.Project;
+import com.zoftko.felf.db.entities.Analysis;
+import com.zoftko.felf.db.entities.Project;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;

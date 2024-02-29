@@ -22,7 +22,7 @@
         <sonar.organization>zoftko</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.coverage.jacoco.xmlReportPaths>
-            felf-coverage/report-aggregate/target/site/ :q>jacoco-aggregate/jacoco.xml
+            felf-coverage//target/site/ :q>jacoco-aggregate/jacoco.xml
         </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 

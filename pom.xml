@@ -21,8 +21,9 @@
         <jacoco.version>0.8.11</jacoco.version>
         <sonar.organization>zoftko</sonar.organization>
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.sources>.</sonar.sources>
-        <sonar.inclusions>src/main/**</sonar.inclusions>
+        <sonar.coverage.jacoco.xmlReportPaths>
+            felf-coverage/report-aggregate/target/site/ :q>jacoco-aggregate/jacoco.xml
+        </sonar.coverage.jacoco.xmlReportPaths>
     </properties>
 
     <modules>

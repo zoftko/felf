@@ -7,8 +7,13 @@
     <main layout:fragment="content" class="mx-auto grow p-4 flex flex-col container">
       <div>
         <div class="flex items-center mt-6">
-          <div class="mb-8 pr-8 pb-6 border-b-neutral-content border-b-2 flex">
+          <div class="mb-8 pr-8 pb-6 border-b-neutral-content border-b-2 flex items-center">
             <h1 class="font-bold text-2xl md:text-3xl inline-block" th:text="${fullName}"></h1>
+            <a class="link link-primary" th:href="@{https://github.com/{repo}(repo = ${fullName})}">
+              <svg class="ms-2 h-4 w-4" fill="currentColor" viewBox="0 0 512 512" stroke="currentColor">
+                <path th:replace="~{fragments/icons :: externalLink}" d=""></path>
+              </svg>
+            </a>
           </div>
           <div class="dropdown dropdown-end mb-auto ml-auto" th:if="${isOwner}">
             <div tabindex="0" role="button" class="btn btn-sm btn-circle btn-ghost">

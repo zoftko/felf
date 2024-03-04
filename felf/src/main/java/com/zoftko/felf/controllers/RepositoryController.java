@@ -62,17 +62,18 @@ public class RepositoryController {
         initModel(owner, repo, model);
 
         var projectData = felfService.getProjectData(owner, repo);
-        model.addAttribute("projectPresent", projectData.project().isPresent());
-        model.addAttribute(
-            "isOwner",
-            principal != null && projectData.isOwner(Integer.parseInt(principal.getName()))
-        );
+        var projectPresent = projectData.project().isPresent();
+        var isPrivate = projectData.repository() != null && projectData.repository().isPrivate();
+        var isOwner = principal != null && projectData.isOwner(Integer.parseInt(principal.getName()));
+
+        if ((!projectPresent && !isOwner) || (!isOwner && isPrivate)) {
+            return "pages/repository/not-found";
+        }
+
         model.addAttribute("hasPermissions", projectData.hasPermissions());
         model.addAttribute("fullName", projectData.fullName());
-        model.addAttribute(
-            "isPrivate",
-            projectData.repository() != null && projectData.repository().isPrivate()
-        );
+        model.addAttribute("projectPresent", projectPresent);
+        model.addAttribute("isOwner", isOwner);
 
         projectData
             .project()

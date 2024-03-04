@@ -15,6 +15,7 @@ import com.zoftko.felf.models.ProjectData;
 import com.zoftko.felf.models.Repository;
 import com.zoftko.felf.models.RepositoryInstallation;
 import com.zoftko.felf.services.FelfService;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeAll;
@@ -70,11 +71,41 @@ class RepositoryControllerTests extends BaseControllerTest {
             );
 
         assertThat(
-            mockMvc.perform(get(getTestUrl).with(githubLogin(123))).andReturn().getModelAndView().getModel()
+            mockMvc
+                .perform(get(getTestUrl).with(githubLogin(123)))
+                .andReturn()
+                .getModelAndView()
+                .getViewName()
         )
-            .containsEntry("isOwner", false)
-            .containsEntry("hasPermissions", false)
-            .containsEntry("projectPresent", false);
+            .isEqualTo("pages/repository/not-found");
+    }
+
+    @Test
+    void privateProjectNotOwner() throws Exception {
+        var repoInstall = new RepositoryInstallation(90, new HashMap<>(), null);
+        var install = new Installation();
+        install.setId(90);
+        install.setSender(456);
+
+        when(felfService.getProjectData(owner, repo))
+            .thenReturn(
+                new ProjectData(
+                    fullName,
+                    Optional.empty(),
+                    Optional.of(install),
+                    repoInstall,
+                    new Repository("kiwi", true, "main")
+                )
+            );
+
+        assertThat(
+            mockMvc
+                .perform(get(getTestUrl).with(githubLogin(123)))
+                .andReturn()
+                .getModelAndView()
+                .getViewName()
+        )
+            .isEqualTo("pages/repository/not-found");
     }
 
     @Test
